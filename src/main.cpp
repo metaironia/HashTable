@@ -1,13 +1,18 @@
 #include <stdio.h>
 #include <assert.h>
 
-#include "fast_list_func.h"
-#include "fast_list_log.h"
+#include "HashTable/hash_table_func.h"
 
 int main (const int argc, const char *argv[]) {
 
-    int list_capacity = 5;
+    HashTable hash_table = {};
+    HashTableCtor (&hash_table);
 
+    HashTableDtor (&hash_table);
+
+    /*
+    int list_capacity = 5;
+    
     FastList lst = {};
     FastListCtor (&lst, list_capacity);
 
@@ -24,7 +29,7 @@ int main (const int argc, const char *argv[]) {
 
     FastListGraphDump (&lst);
 
-    FastListDtor (&lst);
+    FastListDtor (&lst); */
 
 //    ClassicList lst = {};
 //

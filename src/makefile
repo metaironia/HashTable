@@ -1,22 +1,29 @@
-.PHONY: all clean
+.PHONY: all clean rebuild
 CC=g++
-CXXFLAGS=-Wshadow -Winit-self -Wredundant-decls -Wcast-align -Wundef -Wfloat-equal -Winline \
+CFLAGS = -O2
+WARNINGS=-Wshadow -Winit-self -Wcast-align -Wundef -Wfloat-equal -Winline -Wredundant-decls \
  	 -Wunreachable-code -Wmissing-declarations -Wmissing-include-dirs -Wswitch-enum -Wswitch-default \
 	 -Weffc++ -Wmain -Wextra -Wall -g -pipe -fexceptions -Wcast-qual -Wconversion -Wctor-dtor-privacy \
 	 -Wempty-body -Wformat-security -Wformat=2 -Wignored-qualifiers -Wlogical-op -Wno-missing-field-initializers \
 	 -Wnon-virtual-dtor -Woverloaded-virtual -Wpointer-arith -Wsign-promo -Wstack-usage=8192 -Wstrict-aliasing \
 	 -Wstrict-null-sentinel -Wtype-limits -Wwrite-strings -Werror=vla -D_DEBUG -D_EJUDGE_CLIENT_SIDE 
-SOURCES= main.cpp fast_list_func.cpp fast_list_log.cpp 
+SOURCES= main.cpp HashTable/hash_table_func.cpp DoubleLinkedList/fast_list_func.cpp \
+	 DoubleLinkedList/fast_list_log.cpp		 		 
 OBJECTS=$(SOURCES:.cpp=.o)
-EXECUTABLE=fastlist_test
+EXECUTABLE=hash_table_test
 
 all: $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(CXXFLAGS) $^ -o $@
+	$(CC) $(WARNINGS) $^ -o $@
 
 %.o : %.cpp
-	$(CC) -c $(CXXFLAGS) $< -o $@
+	$(CC) -c $(CFLAGS) $(WARNINGS) $< -o $@                    
 
 clean:
-	 rm -f *.o fastlist_test.exe
+	 rm -f *.o mandelbrot.exe
+
+rebuild: clean all
+
+
+
