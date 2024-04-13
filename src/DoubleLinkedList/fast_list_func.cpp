@@ -22,7 +22,7 @@ ListStatus FastListCtor (FastList *created_list, const size_t list_capacity) {
     ON_DEBUG (FAST_LIST_DUMP (created_list));
 
     FastListCreateDummyNode (created_list);
-    FillFastList (created_list, DUMMY_ELEM_POS);
+    FillFastList            (created_list, DUMMY_ELEM_POS);
 
     LIST_VERIFY (created_list);
 
@@ -34,11 +34,8 @@ ListStatus FastListDtor (FastList *list_for_destruct) {
     LIST_VERIFY (list_for_destruct);
 
     FastListStructArrayDtor (list_for_destruct);
-
+    
     memset (list_for_destruct, 0, sizeof (FastList));
-
-    free (list_for_destruct);
-    list_for_destruct = NULL;
 
     return LIST_STATUS_OK;
 }
@@ -81,8 +78,8 @@ ListStatus FillFastList (FastList *const list_for_fill, size_t start_pos) {
 }
 
 ListStatus FastListConnectNeighbourElems (FastList *const list_for_connect_elems,
-                                               const size_t first_elem_pos,
-                                               const size_t second_elem_pos) {
+                                          const size_t first_elem_pos,
+                                          const size_t second_elem_pos) {
 
     assert (list_for_connect_elems);
 
@@ -146,7 +143,7 @@ unsigned int FastListVerify (const FastList *const list_to_verify) {
     }
 
     for (int64_t i = 0, first_elem_next_index = 0, second_elem_prev_index = 0;
-         i < (list_to_verify -> capacity); i++) {
+         i < ((int64_t) (list_to_verify -> capacity)); i++) {
 
         first_elem_next_index  = (list_to_verify -> mainItems)[i].next;
 
@@ -155,7 +152,7 @@ unsigned int FastListVerify (const FastList *const list_to_verify) {
         if (first_elem_next_index == -1 && (list_to_verify -> mainItems)[i].value == POISON)
             continue;
 
-        if (first_elem_next_index >= (list_to_verify -> capacity) || first_elem_next_index < 0) {
+        if (first_elem_next_index >= ((int64_t) (list_to_verify -> capacity)) || first_elem_next_index < 0) {
 
             list_errors |= INVALID_LIST_ELEM_NEXT;
 

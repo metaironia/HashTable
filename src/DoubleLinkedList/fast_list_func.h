@@ -43,13 +43,13 @@ struct FastListMainItems {
 
     FastListElem_t value;
 
-    int prev;
-    int next;
+    int64_t prev;
+    int64_t next;
 };
 
 struct FastListControlItems {
 
-    int free;
+    int64_t free;
 };
 
 struct FastList {
@@ -58,7 +58,7 @@ struct FastList {
 
     FastListMainItems *mainItems;
 
-    size_t capacity;
+    size_t capacity;  //TODO fix capacity and list size types
     size_t list_size;
 };
 
@@ -78,36 +78,36 @@ enum ListErrors {
     DAMAGED_LIST_FREE_ELEM
 };
 
-enum ListStatus FastListCtor (FastList *created_list, const size_t list_capacity);
+ListStatus FastListCtor (FastList *created_list, const size_t list_capacity);
 
-enum ListStatus FastListDtor (FastList *list_for_destruct);
+ListStatus FastListDtor (FastList *list_for_destruct);
 
 FastListMainItems *FastListStructArrayCtor (const FastList *const list_for_create_arrs);
 
-enum ListStatus FastListStructArrayDtor (FastList *list_for_arrs_destruct);
+ListStatus FastListStructArrayDtor (FastList *list_for_arrs_destruct);
 
-enum ListStatus FastListStructArrayClear (FastList *const list_for_clear_struct);
+ListStatus FastListStructArrayClear (FastList *const list_for_clear_struct);
 
-enum ListStatus FillFastList (FastList *const list_for_fill, size_t start_pos);
+ListStatus FillFastList (FastList *const list_for_fill, size_t start_pos);
 
-enum ListStatus FastListConnectNeighbourElems (FastList *const list_for_connect_elems,
+ListStatus FastListConnectNeighbourElems (FastList *const list_for_connect_elems,
                                                const size_t first_elem_pos,
                                                const size_t second_elem_pos);
 
-enum ListStatus FastListCreateDummyNode (FastList *const list_for_create_dummy_node);
+ListStatus FastListCreateDummyNode (FastList *const list_for_create_dummy_node);
 
 unsigned int FastListVerify (const FastList *const list_to_verify);
 
-enum ListStatus FastListAddElemAfter (FastList *const list_for_add_elem, const size_t index_in_list,
+ListStatus FastListAddElemAfter (FastList *const list_for_add_elem, const size_t index_in_list,
                                       size_t *inserted_index,            const FastListElem_t add_value);
 
-enum ListStatus FastListRemoveElem (FastList *const list_for_remove_elem, const size_t index_in_list_remove);
+ListStatus FastListRemoveElem (FastList *const list_for_remove_elem, const size_t index_in_list_remove);
 
-enum ListStatus FastListFreeElem (FastList *const list_for_free_elem, const size_t index_in_list_free);
+ListStatus FastListFreeElem (FastList *const list_for_free_elem, const size_t index_in_list_free);
 
-enum ListStatus FastListGetElem (const FastList *const list_for_get_elem, const size_t index_in_list,
+ListStatus FastListGetElem (const FastList *const list_for_get_elem, const size_t index_in_list,
                                  FastListElem_t *ret_value);
 
-enum ListStatus FastListIncreaseCapacity (FastList *const list_for_increase_cap);
+ListStatus FastListIncreaseCapacity (FastList *const list_for_increase_cap);
 
 #endif
