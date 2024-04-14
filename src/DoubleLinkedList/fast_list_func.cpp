@@ -17,7 +17,8 @@ ListStatus FastListCtor (FastList *created_list, const size_t list_capacity) {
 
     created_list -> capacity  = list_capacity + 1;
     created_list -> list_size = 0;
-    created_list -> mainItems = FastListStructArrayCtor (created_list);
+    
+    FastListStructArrayCtor (created_list);
 
     ON_DEBUG (FAST_LIST_DUMP (created_list));
 
@@ -40,7 +41,7 @@ ListStatus FastListDtor (FastList *list_for_destruct) {
     return LIST_STATUS_OK;
 }
 
-FastListMainItems *FastListStructArrayCtor (const FastList *const list_for_create_arrs) {
+ListStatus FastListStructArrayCtor (const FastList *const list_for_create_arrs) {
 
     assert (list_for_create_arrs);
 
@@ -49,7 +50,7 @@ FastListMainItems *FastListStructArrayCtor (const FastList *const list_for_creat
 
     assert (main_items_ptr);
 
-    return main_items_ptr;
+    return LIST_STATUS_OK;
 }
 
 ListStatus FastListStructArrayDtor (FastList *list_for_arr_destruct) {
@@ -59,7 +60,6 @@ ListStatus FastListStructArrayDtor (FastList *list_for_arr_destruct) {
     FastListStructArrayClear (list_for_arr_destruct);
 
     free (list_for_arr_destruct -> mainItems);
-
     list_for_arr_destruct -> mainItems = NULL;
 
     return LIST_STATUS_OK;
@@ -97,7 +97,7 @@ ListStatus FastListCreateDummyNode (FastList *const list_for_create_dummy_node) 
 
     (list_for_create_dummy_node -> mainItems)[DUMMY_ELEM_POS].value = POISON;
 
-    FastListConnectNeighbourElems (list_for_create_dummy_node, DUMMY_ELEM_POS, DUMMY_ELEM_POS);    //TODO fix position of dummy node
+    FastListConnectNeighbourElems (list_for_create_dummy_node, DUMMY_ELEM_POS, DUMMY_ELEM_POS);
 
     ON_DEBUG (FAST_LIST_DUMP (list_for_create_dummy_node));
 
@@ -143,7 +143,7 @@ unsigned int FastListVerify (const FastList *const list_to_verify) {
     }
 
     for (int64_t i = 0, first_elem_next_index = 0, second_elem_prev_index = 0;
-         i < ((int64_t) (list_to_verify -> capacity)); i++) {
+         i < (list_to_verify -> capacity); i++) {
 
         first_elem_next_index  = (list_to_verify -> mainItems)[i].next;
 
@@ -152,7 +152,7 @@ unsigned int FastListVerify (const FastList *const list_to_verify) {
         if (first_elem_next_index == -1 && (list_to_verify -> mainItems)[i].value == POISON)
             continue;
 
-        if (first_elem_next_index >= ((int64_t) (list_to_verify -> capacity)) || first_elem_next_index < 0) {
+        if (first_elem_next_index >= (list_to_verify -> capacity) || first_elem_next_index < 0) {
 
             list_errors |= INVALID_LIST_ELEM_NEXT;
 

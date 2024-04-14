@@ -58,8 +58,8 @@ struct FastList {
 
     FastListMainItems *mainItems;
 
-    size_t capacity;  //TODO fix capacity and list size types
-    size_t list_size;
+    int64_t capacity;
+    int64_t list_size;
 };
 
 enum ListStatus {
@@ -82,7 +82,7 @@ ListStatus FastListCtor (FastList *created_list, const size_t list_capacity);
 
 ListStatus FastListDtor (FastList *list_for_destruct);
 
-FastListMainItems *FastListStructArrayCtor (const FastList *const list_for_create_arrs);
+ListStatus FastListStructArrayCtor (const FastList *const list_for_create_arrs);
 
 ListStatus FastListStructArrayDtor (FastList *list_for_arrs_destruct);
 
