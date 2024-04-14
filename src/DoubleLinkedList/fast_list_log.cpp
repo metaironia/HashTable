@@ -31,18 +31,18 @@ void CloseLogFile (void) {
     LOG_FILE = NULL;
 }
 
-ListStatus ListImagesFolderCreate (void) {
+ListFuncStatus ListImagesFolderCreate (void) {
 
     system ("mkdir images");
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
-ListStatus ListImageCreate (void) {
+ListFuncStatus ListImageCreate (void) {
 
     system (CommandToCreateImageCreate (ImageNameCreate()));
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
 const char *ImageNameCreate (void) {
@@ -71,9 +71,9 @@ const char *CommandToCreateImageCreate (const char *image_name) {
     return command_to_create_image;
 }
 
-ListStatus FastListDump (const FastList *list_for_dump, const char *file_called,
-                              const char *func_called,       const int line_called,
-                              const char *list_name) {
+ListFuncStatus FastListDump (const FastList *list_for_dump, const char *file_called,
+                             const char *func_called,       const int line_called,
+                             const char *list_name) {
 
     LOG_PRINT (LOG_FILE, "List[0x%p] \"%s\" from %s(%d) %s() \n", list_for_dump, list_name,
                           file_called, line_called, func_called);
@@ -86,10 +86,10 @@ ListStatus FastListDump (const FastList *list_for_dump, const char *file_called,
 
     PrintFastListElem (list_for_dump);
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
-ListStatus PrintFastListElem (const FastList *list_for_print) {
+ListFuncStatus PrintFastListElem (const FastList *list_for_print) {
 
     assert (list_for_print);
 
@@ -101,26 +101,26 @@ ListStatus PrintFastListElem (const FastList *list_for_print) {
         LOG_PRINT (LOG_FILE, "prev = %" PRId64 "\n\n",       (list_for_print -> mainItems)[i].prev);
     }
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
-ListStatus LogPrintListError (const char *error_text) {
+ListFuncStatus LogPrintListError (const char *error_text) {
 
     assert (error_text);
 
     LOG_PRINT (LOG_FILE, "An error %s occurred. \n", error_text);
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
-ListStatus FastListGraphDump (const FastList *list_for_graph_dump) {
+ListFuncStatus FastListGraphDump (const FastList *list_for_graph_dump) {
 
     LIST_VERIFY (list_for_graph_dump);
 
     FILE *graph_dump_file = fopen (LIST_DOT_FILE_NAME, "w");
 
     if (graph_dump_file == NULL)
-        return LIST_STATUS_FAIL;
+        return LIST_FUNC_STATUS_FAIL;
 
     FastListDotFileBegin       (graph_dump_file);
 
@@ -138,10 +138,10 @@ ListStatus FastListGraphDump (const FastList *list_for_graph_dump) {
     ListImagesFolderCreate();
     ListImageCreate();
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
-ListStatus FastListDotFileBegin (FILE *dot_file) {
+ListFuncStatus FastListDotFileBegin (FILE *dot_file) {
 
     assert (dot_file);
 
@@ -149,19 +149,19 @@ ListStatus FastListDotFileBegin (FILE *dot_file) {
                       "rankdir = LR;\n"
                       "graph [bgcolor = white];\n");
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
-ListStatus FastListDotFileEnd (FILE *dot_file) {
+ListFuncStatus FastListDotFileEnd (FILE *dot_file) {
 
     assert (dot_file);
 
     fprintf(dot_file, "\n}\n");
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
-ListStatus FastListDotFileInfo (FILE *dot_file, const FastList *list_for_info) {
+ListFuncStatus FastListDotFileInfo (FILE *dot_file, const FastList *list_for_info) {
 
     assert (dot_file);
 
@@ -171,21 +171,21 @@ ListStatus FastListDotFileInfo (FILE *dot_file, const FastList *list_for_info) {
                       (list_for_info -> controlItems).free, list_for_info -> list_size,
                       list_for_info -> capacity);
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
-ListStatus FastListDotFileColorDummy (FILE *dot_file, const FastList *list_for_output_dummy) {
+ListFuncStatus FastListDotFileColorDummy (FILE *dot_file, const FastList *list_for_output_dummy) {
 
     assert (dot_file);
     assert (list_for_output_dummy);
 
     fprintf(dot_file, "fillcolor = gray, color = black, ");
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
-ListStatus FastListDotFileColorElem (FILE *dot_file_for_color, const FastList *list_for_choose_color,
-                                          const size_t index) {
+ListFuncStatus FastListDotFileColorElem (FILE *dot_file_for_color, const FastList *list_for_choose_color,
+                                         const size_t index) {
 
     assert (dot_file_for_color);
     assert (list_for_choose_color);
@@ -196,11 +196,11 @@ ListStatus FastListDotFileColorElem (FILE *dot_file_for_color, const FastList *l
     else
         fprintf (dot_file_for_color, "fillcolor = \"lightgreen\", color = darkgreen,");
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
 
-ListStatus FastListDotFileOutputElems (FILE *dot_file, const FastList *list_for_output_elems) {
+ListFuncStatus FastListDotFileOutputElems (FILE *dot_file, const FastList *list_for_output_elems) {
 
     assert (dot_file);
     assert (list_for_output_elems);
@@ -235,11 +235,11 @@ ListStatus FastListDotFileOutputElems (FILE *dot_file, const FastList *list_for_
         }
     }
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
-ListStatus FastListDotFileDrawArrows (FILE *dot_file_for_arrows,
-                                           const FastList *list_for_draw_arrows) {
+ListFuncStatus FastListDotFileDrawArrows (FILE *dot_file_for_arrows,
+                                          const FastList *list_for_draw_arrows) {
 
     assert (dot_file_for_arrows);
     assert (list_for_draw_arrows);
@@ -262,11 +262,11 @@ ListStatus FastListDotFileDrawArrows (FILE *dot_file_for_arrows,
         }
     }
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
-ListStatus FastListDotFileCenterElems (FILE *dot_file_for_center,
-                                            const FastList *list_for_center_elems) {
+ListFuncStatus FastListDotFileCenterElems (FILE *dot_file_for_center,
+                                           const FastList *list_for_center_elems) {
 
     assert (dot_file_for_center);
     assert (list_for_center_elems);
@@ -279,5 +279,5 @@ ListStatus FastListDotFileCenterElems (FILE *dot_file_for_center,
                                       i, i + 1);
     }
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }

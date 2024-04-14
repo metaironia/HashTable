@@ -28,44 +28,44 @@ FILE *CreateLogFile (const char *log_file_name);
 
 void CloseLogFile (void);
 
-ListStatus ListImagesFolderCreate (void);
+ListFuncStatus ListImagesFolderCreate (void);
 
-ListStatus ListImageCreate (void);
+ListFuncStatus ListImageCreate (void);
 
 const char *ImageNameCreate (void);
 
 const char *CommandToCreateImageCreate (const char *image_name); 
 
-ListStatus FastListDump (const FastList *list_for_dump, const char *file_called,
-                              const char *func_called,       const int line_called,
-                              const char *list_name);
+ListFuncStatus FastListDump (const FastList *list_for_dump, const char *file_called,
+                             const char *func_called,       const int line_called,
+                             const char *list_name);
 
-ListStatus PrintFastListElem (const FastList *list_for_print);
+ListFuncStatus PrintFastListElem (const FastList *list_for_print);
 
-ListStatus LogPrintListError (const char *error_text);
+ListFuncStatus LogPrintListError (const char *error_text);
 
 //---------------------------------- Graph dump -------------------------------------------------------------
 
-ListStatus FastListGraphDump (const FastList *list_for_graph_dump);
+ListFuncStatus FastListGraphDump (const FastList *list_for_graph_dump);
 
-ListStatus FastListDotFileBegin (FILE *dot_file);
+ListFuncStatus FastListDotFileBegin (FILE *dot_file);
 
-ListStatus FastListDotFileEnd (FILE *dot_file);
+ListFuncStatus FastListDotFileEnd (FILE *dot_file);
 
-ListStatus FastListDotFileInfo (FILE *dot_file, const FastList *list_for_info);
+ListFuncStatus FastListDotFileInfo (FILE *dot_file, const FastList *list_for_info);
 
-ListStatus FastListDotFileColorElem (FILE *dot_file_for_color, const FastList *list_for_choose_color,
-                                          const size_t index);
+ListFuncStatus FastListDotFileColorElem (FILE *dot_file_for_color, const FastList *list_for_choose_color,
+                                         const size_t index);
 
-ListStatus FastListDotFileOutputElems (FILE *dot_file, const FastList *list_for_output_elems);
+ListFuncStatus FastListDotFileOutputElems (FILE *dot_file, const FastList *list_for_output_elems);
 
-ListStatus FastListDotFileDrawArrows (FILE *dot_file_for_arrows,
-                                           const FastList *list_for_draw_arrows);
+ListFuncStatus FastListDotFileDrawArrows (FILE *dot_file_for_arrows,
+                                          const FastList *list_for_draw_arrows);
 
-ListStatus FastListDotFileCenterElems (FILE * dot_file_for_center,
-                                            const FastList *list_for_center_elems);
+ListFuncStatus FastListDotFileCenterElems (FILE * dot_file_for_center,
+                                           const FastList *list_for_center_elems);
 
-ListStatus FastListDotFileColorDummy (FILE *dot_file, const FastList *list_for_output_dummy);
+ListFuncStatus FastListDotFileColorDummy (FILE *dot_file, const FastList *list_for_output_dummy);
 
 
 #endif

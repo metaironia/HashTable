@@ -8,12 +8,12 @@
 #include "fast_list_log.h"
 
 
-ListStatus FastListCtor (FastList *created_list, const int64_t list_capacity) {
+ListFuncStatus FastListCtor (FastList *created_list, const int64_t list_capacity) {
 
     assert (created_list);
 
     if (list_capacity <= 0)
-        return LIST_STATUS_FAIL;
+        return LIST_FUNC_STATUS_FAIL;
 
     created_list -> capacity  = list_capacity + 1; // +1 because of dummy node
     created_list -> list_size = 0;
@@ -24,10 +24,10 @@ ListStatus FastListCtor (FastList *created_list, const int64_t list_capacity) {
 
     LIST_VERIFY (created_list);
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
-ListStatus FastListDtor (FastList *list_for_destruct) {
+ListFuncStatus FastListDtor (FastList *list_for_destruct) {
 
     LIST_VERIFY (list_for_destruct);
 
@@ -35,10 +35,10 @@ ListStatus FastListDtor (FastList *list_for_destruct) {
     
     memset (list_for_destruct, 0, sizeof (FastList));
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
-ListStatus FastListStructArrayCtor (FastList *list_for_create_arrs) {
+ListFuncStatus FastListStructArrayCtor (FastList *list_for_create_arrs) {
 
     assert (list_for_create_arrs);
 
@@ -50,10 +50,10 @@ ListStatus FastListStructArrayCtor (FastList *list_for_create_arrs) {
     FastListCreateDummyNode (list_for_create_arrs);
     FillFastList            (list_for_create_arrs, DUMMY_ELEM_POS);
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
-ListStatus FastListStructArrayDtor (FastList *list_for_arr_destruct) {
+ListFuncStatus FastListStructArrayDtor (FastList *list_for_arr_destruct) {
 
     LIST_VERIFY (list_for_arr_destruct);
 
@@ -62,25 +62,25 @@ ListStatus FastListStructArrayDtor (FastList *list_for_arr_destruct) {
     free (list_for_arr_destruct -> mainItems);
     list_for_arr_destruct -> mainItems = NULL;
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
-ListStatus FillFastList (FastList *const list_for_fill, const int64_t start_pos) {
+ListFuncStatus FillFastList (FastList *const list_for_fill, const int64_t start_pos) {
 
     assert (list_for_fill);
 
     if (start_pos < 0)
-        return LIST_STATUS_FAIL;
+        return LIST_FUNC_STATUS_FAIL;
 
     for (size_t i = ((size_t) list_for_fill -> capacity) - 1; i > (size_t) start_pos; i--)
         FastListFreeElem (list_for_fill, i);
 
     ON_DEBUG (FAST_LIST_DUMP (list_for_fill));
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
-ListStatus FastListConnectNeighbourElems (FastList *const list_for_connect_elems,
+ListFuncStatus FastListConnectNeighbourElems (FastList *const list_for_connect_elems,
                                           const int64_t first_elem_pos,
                                           const int64_t second_elem_pos) {
 
@@ -89,17 +89,17 @@ ListStatus FastListConnectNeighbourElems (FastList *const list_for_connect_elems
     if (first_elem_pos  < 0 || first_elem_pos  > (list_for_connect_elems -> capacity) ||
         second_elem_pos < 0 || second_elem_pos > (list_for_connect_elems -> capacity))
         
-        return LIST_STATUS_FAIL;
+        return LIST_FUNC_STATUS_FAIL;
 
     (list_for_connect_elems -> mainItems)[first_elem_pos].next  = second_elem_pos;
     (list_for_connect_elems -> mainItems)[second_elem_pos].prev = first_elem_pos;
 
     ON_DEBUG (FAST_LIST_DUMP (list_for_connect_elems));
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
-ListStatus FastListCreateDummyNode (FastList *const list_for_create_dummy_node) {
+ListFuncStatus FastListCreateDummyNode (FastList *const list_for_create_dummy_node) {
 
     assert (list_for_create_dummy_node);
 
@@ -109,10 +109,10 @@ ListStatus FastListCreateDummyNode (FastList *const list_for_create_dummy_node) 
 
     ON_DEBUG (FAST_LIST_DUMP (list_for_create_dummy_node));
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
-ListStatus FastListStructArrayClear (FastList *const list_for_clear_struct) {
+ListFuncStatus FastListStructArrayClear (FastList *const list_for_clear_struct) {
 
     LIST_VERIFY (list_for_clear_struct);
 
@@ -122,7 +122,7 @@ ListStatus FastListStructArrayClear (FastList *const list_for_clear_struct) {
 
     ON_DEBUG (FAST_LIST_DUMP (list_for_clear_struct));
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
 unsigned int FastListVerify (const FastList *const list_to_verify) {
@@ -194,15 +194,14 @@ unsigned int FastListVerify (const FastList *const list_to_verify) {
 
     if ((list_to_verify -> mainItems)[free_elem_index].value != POISON) {
 
-        list_errors |= DAMAGED_LIST_FREE_ELEM;
-
+        list_errors |=      DAMAGED_LIST_FREE_ELEM;
         LogPrintListError ("DAMAGED_LIST_FREE_ELEM");
     }
 
     return list_errors;
 }
 
-ListStatus FastListAddElemAfter (FastList *const list_for_add_elem, const int64_t        index_in_list,
+ListFuncStatus FastListAddElemAfter (FastList *const list_for_add_elem, const int64_t        index_in_list,
                                  int64_t        *inserted_index,    const FastListElem_t add_value) {
 
     assert (inserted_index);
@@ -210,11 +209,11 @@ ListStatus FastListAddElemAfter (FastList *const list_for_add_elem, const int64_
     LIST_VERIFY (list_for_add_elem);
 
     if (index_in_list < 0 || index_in_list > (list_for_add_elem -> capacity))
-        return LIST_STATUS_FAIL;
+        return LIST_FUNC_STATUS_FAIL;
 
     if ((list_for_add_elem -> controlItems).free == DUMMY_ELEM_POS)
-        if (FastListIncreaseCapacity (list_for_add_elem) == LIST_STATUS_FAIL)
-            return LIST_STATUS_FAIL;
+        if (FastListIncreaseCapacity (list_for_add_elem) == LIST_FUNC_STATUS_FAIL)
+            return LIST_FUNC_STATUS_FAIL;
 
     const size_t free_elem_index    = (list_for_add_elem -> controlItems).free;
     const size_t index_in_list_next = (list_for_add_elem -> mainItems)[index_in_list].next;
@@ -232,10 +231,10 @@ ListStatus FastListAddElemAfter (FastList *const list_for_add_elem, const int64_
 
     ON_DEBUG (FAST_LIST_DUMP (list_for_add_elem));
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
-ListStatus FastListRemoveElem (FastList *const list_for_remove_elem, const int64_t index_in_list_remove) {
+ListFuncStatus FastListRemoveElem (FastList *const list_for_remove_elem, const int64_t index_in_list_remove) {
 
     LIST_VERIFY (list_for_remove_elem);
 
@@ -243,13 +242,13 @@ ListStatus FastListRemoveElem (FastList *const list_for_remove_elem, const int64
         index_in_list_remove > (list_for_remove_elem -> capacity) ||
         index_in_list_remove < 0)
 
-        return LIST_STATUS_FAIL;
+        return LIST_FUNC_STATUS_FAIL;
 
     size_t prev_of_index_remove = (list_for_remove_elem -> mainItems)[index_in_list_remove].prev;
     size_t next_of_index_remove = (list_for_remove_elem -> mainItems)[index_in_list_remove].next;
 
-    if (FastListFreeElem (list_for_remove_elem, index_in_list_remove) == LIST_STATUS_FAIL)
-        return LIST_STATUS_FAIL;
+    if (FastListFreeElem (list_for_remove_elem, index_in_list_remove) == LIST_FUNC_STATUS_FAIL)
+        return LIST_FUNC_STATUS_FAIL;
 
     FastListConnectNeighbourElems (list_for_remove_elem, prev_of_index_remove, next_of_index_remove);
 
@@ -257,10 +256,10 @@ ListStatus FastListRemoveElem (FastList *const list_for_remove_elem, const int64
 
     ON_DEBUG (FAST_LIST_DUMP (list_for_remove_elem));
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
-ListStatus FastListFreeElem (FastList *const list_for_free_elem, const int64_t index_in_list_free) {
+ListFuncStatus FastListFreeElem (FastList *const list_for_free_elem, const int64_t index_in_list_free) {
 
     assert (list_for_free_elem);
 
@@ -268,7 +267,7 @@ ListStatus FastListFreeElem (FastList *const list_for_free_elem, const int64_t i
         index_in_list_free > (list_for_free_elem -> capacity) ||
         index_in_list_free < 0)
 
-        return LIST_STATUS_FAIL;
+        return LIST_FUNC_STATUS_FAIL;
 
     (list_for_free_elem -> mainItems)[index_in_list_free].value = POISON;
     (list_for_free_elem -> mainItems)[index_in_list_free].next  = -1;
@@ -278,10 +277,10 @@ ListStatus FastListFreeElem (FastList *const list_for_free_elem, const int64_t i
 
     ON_DEBUG (FAST_LIST_DUMP (list_for_free_elem));
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
-ListStatus FastListGetElem (const FastList *const list_for_get_elem, const int64_t index_in_list,
+ListFuncStatus FastListGetElem (const FastList *const list_for_get_elem, const int64_t index_in_list,
                                   FastListElem_t *ret_value) {
 
     assert (ret_value);
@@ -292,16 +291,16 @@ ListStatus FastListGetElem (const FastList *const list_for_get_elem, const int64
         index_in_list > (list_for_get_elem -> capacity) ||
         index_in_list < 0)
 
-        return LIST_STATUS_FAIL;
+        return LIST_FUNC_STATUS_FAIL;
 
     *ret_value = (list_for_get_elem -> mainItems)[index_in_list].value;
 
     ON_DEBUG (FAST_LIST_DUMP (list_for_get_elem));
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
 
-ListStatus FastListIncreaseCapacity (FastList *const list_for_increase_cap) {
+ListFuncStatus FastListIncreaseCapacity (FastList *const list_for_increase_cap) {
 
     LIST_VERIFY (list_for_increase_cap);
 
@@ -319,7 +318,7 @@ ListStatus FastListIncreaseCapacity (FastList *const list_for_increase_cap) {
                                                              size_of_all_elems_in_bytes);
 
     if (ptr_to_fast_list_elems == NULL)
-        return LIST_STATUS_FAIL;
+        return LIST_FUNC_STATUS_FAIL;
 
     memset (*ptr_to_fast_list_elems + prev_capacity, 0, size_of_new_elems_in_bytes);
 
@@ -328,5 +327,5 @@ ListStatus FastListIncreaseCapacity (FastList *const list_for_increase_cap) {
 
     ON_DEBUG (FAST_LIST_DUMP (list_for_increase_cap));
 
-    return LIST_STATUS_OK;
+    return LIST_FUNC_STATUS_OK;
 }
