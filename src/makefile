@@ -21,7 +21,9 @@ $(EXECUTABLE): $(OBJECTS)
 	$(CC) -c $(CFLAGS) $(WARNINGS) $< -o $@                    
 
 clean:
-	 rm -f *.o mandelbrot.exe
+	 rm -f *.o hash_table_test.exe
+	 rm -f DoubleLinkedList/*.o
+	 rm -f HashTable/*.o
 
 rebuild: clean all
 

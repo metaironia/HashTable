@@ -8,22 +8,19 @@
 #include "fast_list_log.h"
 
 
-ListStatus FastListCtor (FastList *created_list, const size_t list_capacity) {
+ListStatus FastListCtor (FastList *created_list, const int64_t list_capacity) {
 
     assert (created_list);
 
     if (list_capacity <= 0)
         return LIST_STATUS_FAIL;
 
-    created_list -> capacity  = list_capacity + 1;
+    created_list -> capacity  = list_capacity + 1; // +1 because of dummy node
     created_list -> list_size = 0;
     
     FastListStructArrayCtor (created_list);
 
     ON_DEBUG (FAST_LIST_DUMP (created_list));
-
-    FastListCreateDummyNode (created_list);
-    FillFastList            (created_list, DUMMY_ELEM_POS);
 
     LIST_VERIFY (created_list);
 
@@ -41,14 +38,17 @@ ListStatus FastListDtor (FastList *list_for_destruct) {
     return LIST_STATUS_OK;
 }
 
-ListStatus FastListStructArrayCtor (const FastList *const list_for_create_arrs) {
+ListStatus FastListStructArrayCtor (FastList *list_for_create_arrs) {
 
     assert (list_for_create_arrs);
 
-    FastListMainItems *main_items_ptr = (FastListMainItems *) calloc (list_for_create_arrs -> capacity,
-                                                                      sizeof (FastListMainItems));
+    (list_for_create_arrs -> mainItems) = (FastListMainItems *) calloc (list_for_create_arrs -> capacity,
+                                                                        sizeof (FastListMainItems));
 
-    assert (main_items_ptr);
+    assert (list_for_create_arrs -> mainItems);
+   
+    FastListCreateDummyNode (list_for_create_arrs);
+    FillFastList            (list_for_create_arrs, DUMMY_ELEM_POS);
 
     return LIST_STATUS_OK;
 }
@@ -65,11 +65,14 @@ ListStatus FastListStructArrayDtor (FastList *list_for_arr_destruct) {
     return LIST_STATUS_OK;
 }
 
-ListStatus FillFastList (FastList *const list_for_fill, size_t start_pos) {
+ListStatus FillFastList (FastList *const list_for_fill, const int64_t start_pos) {
 
     assert (list_for_fill);
 
-    for (size_t i = list_for_fill -> capacity - 1; i > start_pos; i--)
+    if (start_pos < 0)
+        return LIST_STATUS_FAIL;
+
+    for (size_t i = ((size_t) list_for_fill -> capacity) - 1; i > (size_t) start_pos; i--)
         FastListFreeElem (list_for_fill, i);
 
     ON_DEBUG (FAST_LIST_DUMP (list_for_fill));
@@ -78,10 +81,15 @@ ListStatus FillFastList (FastList *const list_for_fill, size_t start_pos) {
 }
 
 ListStatus FastListConnectNeighbourElems (FastList *const list_for_connect_elems,
-                                          const size_t first_elem_pos,
-                                          const size_t second_elem_pos) {
+                                          const int64_t first_elem_pos,
+                                          const int64_t second_elem_pos) {
 
     assert (list_for_connect_elems);
+
+    if (first_elem_pos  < 0 || first_elem_pos  > (list_for_connect_elems -> capacity) ||
+        second_elem_pos < 0 || second_elem_pos > (list_for_connect_elems -> capacity))
+        
+        return LIST_STATUS_FAIL;
 
     (list_for_connect_elems -> mainItems)[first_elem_pos].next  = second_elem_pos;
     (list_for_connect_elems -> mainItems)[second_elem_pos].prev = first_elem_pos;
@@ -123,29 +131,42 @@ unsigned int FastListVerify (const FastList *const list_to_verify) {
 
     if (list_to_verify == NULL) {
 
-        list_errors |= INVALID_LIST_POINTER;
-
+        list_errors |=      INVALID_LIST_POINTER;
         LogPrintListError ("INVALID_LIST_POINTER");
+
+        return list_errors;
+    }
+
+    if (list_to_verify -> capacity <= 0) {
+
+        list_errors |=      NEGATIVE_LIST_CAPACITY;
+        LogPrintListError ("NEGATIVE_LIST_CAPACITY");
+    }
+
+    if (list_to_verify -> list_size < 0) {
+
+        list_errors |=      NEGATIVE_LIST_SIZE;
+        LogPrintListError ("NEGATIVE_LIST_SIZE");
     }
 
     if ((list_to_verify -> list_size) > (list_to_verify -> capacity)) {
 
-        list_errors |= INVALID_LIST_SIZE;
-
+        list_errors |=      INVALID_LIST_SIZE;
         LogPrintListError ("INVALID_LIST_SIZE");
     }
 
+    if (list_errors)
+        return list_errors;
+
     if ((list_to_verify -> mainItems)[DUMMY_ELEM_POS].value != POISON) {
 
-        list_errors |= DAMAGED_LIST_DUMMY_NODE;
-
+        list_errors |=      DAMAGED_LIST_DUMMY_NODE;
         LogPrintListError ("DAMAGED_LIST_DUMMY_NODE");
     }
 
-    for (int64_t i = 0, first_elem_next_index = 0, second_elem_prev_index = 0;
-         i < (list_to_verify -> capacity); i++) {
+    for (int64_t i = 0; i < (list_to_verify -> capacity); i++) {
 
-        first_elem_next_index  = (list_to_verify -> mainItems)[i].next;
+        int64_t first_elem_next_index = (list_to_verify -> mainItems)[i].next;
 
         // if next is -1 and value is POISON then cell is free
 
@@ -154,17 +175,15 @@ unsigned int FastListVerify (const FastList *const list_to_verify) {
 
         if (first_elem_next_index >= (list_to_verify -> capacity) || first_elem_next_index < 0) {
 
-            list_errors |= INVALID_LIST_ELEM_NEXT;
-
+            list_errors |=      INVALID_LIST_ELEM_NEXT;
             LogPrintListError ("INVALID_LIST_ELEM_NEXT");
         }
 
-        second_elem_prev_index = (list_to_verify -> mainItems)[first_elem_next_index].prev;
+        int64_t second_elem_prev_index = (list_to_verify -> mainItems)[first_elem_next_index].prev;
 
         if (i != second_elem_prev_index) {
 
-            list_errors |= DAMAGED_CONNECTION_LIST;
-
+            list_errors |=      DAMAGED_CONNECTION_LIST;
             LogPrintListError ("DAMAGED_CONNECTION_LIST");
 
             break;
@@ -183,12 +202,15 @@ unsigned int FastListVerify (const FastList *const list_to_verify) {
     return list_errors;
 }
 
-ListStatus FastListAddElemAfter (FastList *const list_for_add_elem, const size_t index_in_list,
-                                      size_t *inserted_index,            const FastListElem_t add_value) {
+ListStatus FastListAddElemAfter (FastList *const list_for_add_elem, const int64_t        index_in_list,
+                                 int64_t        *inserted_index,    const FastListElem_t add_value) {
 
     assert (inserted_index);
 
     LIST_VERIFY (list_for_add_elem);
+
+    if (index_in_list < 0 || index_in_list > (list_for_add_elem -> capacity))
+        return LIST_STATUS_FAIL;
 
     if ((list_for_add_elem -> controlItems).free == DUMMY_ELEM_POS)
         if (FastListIncreaseCapacity (list_for_add_elem) == LIST_STATUS_FAIL)
@@ -206,16 +228,22 @@ ListStatus FastListAddElemAfter (FastList *const list_for_add_elem, const size_t
 
     *inserted_index = free_elem_index;
 
-    (list_for_add_elem -> list_size) += 1;
+    (list_for_add_elem -> list_size)++;
 
     ON_DEBUG (FAST_LIST_DUMP (list_for_add_elem));
 
     return LIST_STATUS_OK;
 }
 
-ListStatus FastListRemoveElem (FastList *const list_for_remove_elem, const size_t index_in_list_remove) {
+ListStatus FastListRemoveElem (FastList *const list_for_remove_elem, const int64_t index_in_list_remove) {
 
     LIST_VERIFY (list_for_remove_elem);
+
+    if (index_in_list_remove == DUMMY_ELEM_POS                    || 
+        index_in_list_remove > (list_for_remove_elem -> capacity) ||
+        index_in_list_remove < 0)
+
+        return LIST_STATUS_FAIL;
 
     size_t prev_of_index_remove = (list_for_remove_elem -> mainItems)[index_in_list_remove].prev;
     size_t next_of_index_remove = (list_for_remove_elem -> mainItems)[index_in_list_remove].next;
@@ -225,18 +253,21 @@ ListStatus FastListRemoveElem (FastList *const list_for_remove_elem, const size_
 
     FastListConnectNeighbourElems (list_for_remove_elem, prev_of_index_remove, next_of_index_remove);
 
-    (list_for_remove_elem -> list_size) -= 1;
+    (list_for_remove_elem -> list_size)--;
 
     ON_DEBUG (FAST_LIST_DUMP (list_for_remove_elem));
 
     return LIST_STATUS_OK;
 }
 
-ListStatus FastListFreeElem (FastList *const list_for_free_elem, const size_t index_in_list_free) {
+ListStatus FastListFreeElem (FastList *const list_for_free_elem, const int64_t index_in_list_free) {
 
     assert (list_for_free_elem);
 
-    if (index_in_list_free == DUMMY_ELEM_POS)
+    if (index_in_list_free == DUMMY_ELEM_POS                  || 
+        index_in_list_free > (list_for_free_elem -> capacity) ||
+        index_in_list_free < 0)
+
         return LIST_STATUS_FAIL;
 
     (list_for_free_elem -> mainItems)[index_in_list_free].value = POISON;
@@ -250,12 +281,18 @@ ListStatus FastListFreeElem (FastList *const list_for_free_elem, const size_t in
     return LIST_STATUS_OK;
 }
 
-ListStatus FastListGetElem (const FastList *const list_for_get_elem, const size_t index_in_list,
-                                 FastListElem_t *ret_value) {
+ListStatus FastListGetElem (const FastList *const list_for_get_elem, const int64_t index_in_list,
+                                  FastListElem_t *ret_value) {
 
     assert (ret_value);
 
     LIST_VERIFY (list_for_get_elem);
+
+    if (index_in_list == DUMMY_ELEM_POS                 || 
+        index_in_list > (list_for_get_elem -> capacity) ||
+        index_in_list < 0)
+
+        return LIST_STATUS_FAIL;
 
     *ret_value = (list_for_get_elem -> mainItems)[index_in_list].value;
 
