@@ -55,6 +55,9 @@ HashTableFuncStatus HashTableInsert (HashTable *hash_table, const HashTableElem_
 
     assert (hash_table);
 
+    if (key < 0)
+        return HASH_TABLE_FUNC_STATUS_FAIL;
+
     int64_t   cell_num = key % HASH_TABLE_SIZE_;
     FastList *cell_ptr = HASH_TABLE_CELL_ + cell_num;
 
