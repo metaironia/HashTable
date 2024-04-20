@@ -31,21 +31,19 @@ void CloseLogFile (void) {
     LOG_FILE = NULL;
 }
 
-ListFuncStatus ListImagesFolderCreate (void) {
+int ImagesFolderCreate (void) {
 
-    system ("mkdir images");
-
-    return LIST_FUNC_STATUS_OK;
+    return system ("mkdir images");
 }
 
-ListFuncStatus ListImageCreate (void) {
+int ImageCreate (const char *struct_name) {
 
-    system (CommandToCreateImageCreate (ImageNameCreate()));
-
-    return LIST_FUNC_STATUS_OK;
+    return system (CommandToCreateImageCreate (struct_name, ImageNameCreate(struct_name)));
 }
 
-const char *ImageNameCreate (void) {
+const char *ImageNameCreate (const char *struct_name) {
+
+    assert (struct_name);
 
     static int image_number = 0;
 
@@ -53,20 +51,21 @@ const char *ImageNameCreate (void) {
 
     memset (image_name, 0, MAX_IMAGE_NAME_LENGTH + 1);
 
-    sprintf (image_name, "list_img_%d.png", image_number++);
+    sprintf (image_name, "%s_img_%d.png", struct_name, image_number++);
 
     return image_name;
 }
 
-const char *CommandToCreateImageCreate (const char *image_name) {
+const char *CommandToCreateImageCreate (const char *struct_name, const char *image_name) {
 
+    assert (struct_name);
     assert (image_name);
 
     static char command_to_create_image[MAX_COMMAND_LENGTH + 1] = {};
 
     memset (command_to_create_image, 0, MAX_COMMAND_LENGTH + 1);
 
-    sprintf (command_to_create_image, "dot " LIST_DOT_FILE_NAME " -T png -o images\\%s", image_name);
+    sprintf (command_to_create_image, "dot %s_dot_file.dot -T png -o images\\%s", struct_name, image_name);
 
     return command_to_create_image;
 }
@@ -113,6 +112,21 @@ ListFuncStatus LogPrintListError (const char *error_text) {
     return LIST_FUNC_STATUS_OK;
 }
 
+ListFuncStatus FastListDotFilePrint (FILE *graph_dump_file, const FastList *list) {
+
+    assert (graph_dump_file);
+
+    LIST_VERIFY (list);
+
+    FastListDotFileInfo        (graph_dump_file, list);
+    FastListDotFileOutputElems (graph_dump_file, list);
+
+    FastListDotFileCenterElems (graph_dump_file, list);
+    FastListDotFileDrawArrows  (graph_dump_file, list);
+
+    return LIST_FUNC_STATUS_OK;
+}
+
 ListFuncStatus FastListGraphDump (const FastList *list_for_graph_dump) {
 
     LIST_VERIFY (list_for_graph_dump);
@@ -122,21 +136,15 @@ ListFuncStatus FastListGraphDump (const FastList *list_for_graph_dump) {
     if (graph_dump_file == NULL)
         return LIST_FUNC_STATUS_FAIL;
 
-    FastListDotFileBegin       (graph_dump_file);
-
-    FastListDotFileInfo        (graph_dump_file, list_for_graph_dump);
-    FastListDotFileOutputElems (graph_dump_file, list_for_graph_dump);
-
-    FastListDotFileCenterElems (graph_dump_file, list_for_graph_dump);
-    FastListDotFileDrawArrows  (graph_dump_file, list_for_graph_dump);
-
-    FastListDotFileEnd         (graph_dump_file);
+    FastListDotFileBegin (graph_dump_file);
+    FastListDotFilePrint (graph_dump_file, list_for_graph_dump);
+    FastListDotFileEnd   (graph_dump_file);
 
     fclose (graph_dump_file);
     graph_dump_file = NULL;
 
-    ListImagesFolderCreate();
-    ListImageCreate();
+    ImagesFolderCreate();
+    ImageCreate ("list");
 
     return LIST_FUNC_STATUS_OK;
 }
