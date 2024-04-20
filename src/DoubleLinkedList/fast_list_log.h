@@ -17,7 +17,7 @@
                                                                       \
                                   } while (0)
 
-#define LIST_EL_FORMAT            "%d"
+#define LIST_EL_FORMAT            "%s"
 
 #define LIST_DOT_FILE_NAME        "list_dot_file.dot"
 

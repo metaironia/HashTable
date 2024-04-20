@@ -17,7 +17,7 @@ ListFuncStatus FastListCtor (FastList *created_list, const int64_t list_capacity
 
     created_list -> capacity  = list_capacity + 1; // +1 because of dummy node
     created_list -> list_size = 0;
-    
+
     FastListStructArrayCtor (created_list);
 
     ON_DEBUG (FAST_LIST_DUMP (created_list));
@@ -46,7 +46,7 @@ ListFuncStatus FastListStructArrayCtor (FastList *list_for_create_arrs) {
                                                                         sizeof (FastListMainItems));
 
     assert (list_for_create_arrs -> mainItems);
-   
+ 
     FastListCreateDummyNode (list_for_create_arrs);
     FillFastList            (list_for_create_arrs, DUMMY_ELEM_POS);
 
@@ -81,8 +81,8 @@ ListFuncStatus FillFastList (FastList *const list_for_fill, const int64_t start_
 }
 
 ListFuncStatus FastListConnectNeighbourElems (FastList *const list_for_connect_elems,
-                                          const int64_t first_elem_pos,
-                                          const int64_t second_elem_pos) {
+                                              const int64_t first_elem_pos,
+                                              const int64_t second_elem_pos) {
 
     assert (list_for_connect_elems);
 
@@ -103,7 +103,7 @@ ListFuncStatus FastListCreateDummyNode (FastList *const list_for_create_dummy_no
 
     assert (list_for_create_dummy_node);
 
-    (list_for_create_dummy_node -> mainItems)[DUMMY_ELEM_POS].value = POISON;
+    (list_for_create_dummy_node -> mainItems)[DUMMY_ELEM_POS].value = (FastListElem_t) POISON;
 
     FastListConnectNeighbourElems (list_for_create_dummy_node, DUMMY_ELEM_POS, DUMMY_ELEM_POS);
 
@@ -158,7 +158,7 @@ unsigned int FastListVerify (const FastList *const list_to_verify) {
     if (list_errors)
         return list_errors;
 
-    if ((list_to_verify -> mainItems)[DUMMY_ELEM_POS].value != POISON) {
+    if ((list_to_verify -> mainItems)[DUMMY_ELEM_POS].value != (FastListElem_t) POISON) {
 
         list_errors |=      DAMAGED_LIST_DUMMY_NODE;
         LogPrintListError ("DAMAGED_LIST_DUMMY_NODE");
@@ -170,7 +170,7 @@ unsigned int FastListVerify (const FastList *const list_to_verify) {
 
         // if next is -1 and value is POISON then cell is free
 
-        if (first_elem_next_index == -1 && (list_to_verify -> mainItems)[i].value == POISON)
+        if (first_elem_next_index == -1 && (list_to_verify -> mainItems)[i].value == (FastListElem_t) POISON)
             continue;
 
         if (first_elem_next_index >= (list_to_verify -> capacity) || first_elem_next_index < 0) {
@@ -192,7 +192,7 @@ unsigned int FastListVerify (const FastList *const list_to_verify) {
 
     size_t free_elem_index = ((list_to_verify -> controlItems).free);
 
-    if ((list_to_verify -> mainItems)[free_elem_index].value != POISON) {
+    if ((list_to_verify -> mainItems)[free_elem_index].value != (FastListElem_t) POISON) {
 
         list_errors |=      DAMAGED_LIST_FREE_ELEM;
         LogPrintListError ("DAMAGED_LIST_FREE_ELEM");
@@ -202,7 +202,7 @@ unsigned int FastListVerify (const FastList *const list_to_verify) {
 }
 
 ListFuncStatus FastListAddElemAfter (FastList *const list_for_add_elem, const int64_t        index_in_list,
-                                 int64_t        *inserted_index,    const FastListElem_t add_value) {
+                                     int64_t        *inserted_index,    const FastListElem_t add_value) {
 
     assert (inserted_index);
 
@@ -269,7 +269,7 @@ ListFuncStatus FastListFreeElem (FastList *const list_for_free_elem, const int64
 
         return LIST_FUNC_STATUS_FAIL;
 
-    (list_for_free_elem -> mainItems)[index_in_list_free].value = POISON;
+    (list_for_free_elem -> mainItems)[index_in_list_free].value = (FastListElem_t) POISON;
     (list_for_free_elem -> mainItems)[index_in_list_free].next  = -1;
     (list_for_free_elem -> mainItems)[index_in_list_free].prev  = (list_for_free_elem -> controlItems).free;
 
@@ -281,7 +281,7 @@ ListFuncStatus FastListFreeElem (FastList *const list_for_free_elem, const int64
 }
 
 ListFuncStatus FastListGetElem (const FastList *const list_for_get_elem, const int64_t index_in_list,
-                                  FastListElem_t *ret_value) {
+                                FastListElem_t *ret_value) {
 
     assert (ret_value);
 

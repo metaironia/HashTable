@@ -34,7 +34,7 @@
     #define ON_DEBUG(...)
 #endif
 
-typedef int FastListElem_t;
+typedef const char* FastListElem_t;
 
 struct FastListMainItems {
 

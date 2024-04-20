@@ -94,10 +94,15 @@ ListFuncStatus PrintFastListElem (const FastList *list_for_print) {
 
     for (size_t i = 0; i < (size_t) (list_for_print -> capacity); i++) {
 
-        LOG_PRINT (LOG_FILE, "Element %zu: \n",              i);
-        LOG_PRINT (LOG_FILE, "value = " LIST_EL_FORMAT "\n", (list_for_print -> mainItems)[i].value);
-        LOG_PRINT (LOG_FILE, "next = %" PRId64 "\n",         (list_for_print -> mainItems)[i].next);
-        LOG_PRINT (LOG_FILE, "prev = %" PRId64 "\n\n",       (list_for_print -> mainItems)[i].prev);
+        LOG_PRINT (LOG_FILE,     "Element %zu: \n",              i);
+
+        if ((list_for_print -> mainItems)[i].value != (FastListElem_t) POISON)
+            LOG_PRINT (LOG_FILE, "value = " LIST_EL_FORMAT "\n", (list_for_print -> mainItems)[i].value);
+        else
+            LOG_PRINT (LOG_FILE, "value = (POISON)\n");
+
+        LOG_PRINT (LOG_FILE,     "next = %" PRId64 "\n",         (list_for_print -> mainItems)[i].next);
+        LOG_PRINT (LOG_FILE,     "prev = %" PRId64 "\n\n",       (list_for_print -> mainItems)[i].prev);
     }
 
     return LIST_FUNC_STATUS_OK;
@@ -203,7 +208,7 @@ ListFuncStatus FastListDotFileColorElem (FILE *dot_file_for_color, const FastLis
     assert (dot_file_for_color);
     assert (list_for_choose_color);
 
-    if ((list_for_choose_color -> mainItems)[index].value == POISON)
+    if ((list_for_choose_color -> mainItems)[index].value == (FastListElem_t) POISON)
         fprintf (dot_file_for_color, "fillcolor = \"crimson\", color = black,");
 
     else
@@ -231,9 +236,9 @@ ListFuncStatus FastListDotFileOutputElems (FILE *dot_file, const FastList *list_
 
         fprintf (dot_file, " label=\" ");
 
-        if ((list_for_output_elems -> mainItems)[i].value == POISON) {
+        if ((list_for_output_elems -> mainItems)[i].value == (FastListElem_t) POISON) {
 
-            fprintf(dot_file, "index: %zu | value: POISON | next: %" PRId64 "| prev: %" PRId64 "\" ];\n",
+            fprintf(dot_file, "index: %zu | value: (POISON) | next: %" PRId64 "| prev: %" PRId64 "\" ];\n",
                               i,
                               (list_for_output_elems -> mainItems)[i].next,
                               (list_for_output_elems -> mainItems)[i].prev);
@@ -262,7 +267,7 @@ ListFuncStatus FastListDotFileDrawArrows (FILE *dot_file_for_arrows,
     for (size_t i = 0; i < (size_t) (list_for_draw_arrows -> capacity); i++) {
 
         if ((list_for_draw_arrows -> mainItems)[i].next  == -1 &&
-            (list_for_draw_arrows -> mainItems)[i].value == POISON)
+            (list_for_draw_arrows -> mainItems)[i].value == (FastListElem_t) POISON)
 
             fprintf (dot_file_for_arrows, "L%zu_%d -> L%" PRId64 "_%d [weight = 0, color = \"red\"];\n",
                                           i, list_num, (list_for_draw_arrows -> mainItems)[i].prev, list_num);
