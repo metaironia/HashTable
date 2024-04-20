@@ -118,11 +118,15 @@ ListFuncStatus FastListDotFilePrint (FILE *graph_dump_file, const FastList *list
 
     LIST_VERIFY (list);
 
-    FastListDotFileInfo        (graph_dump_file, list);
-    FastListDotFileOutputElems (graph_dump_file, list);
+    static int list_num = 0;
 
-    FastListDotFileCenterElems (graph_dump_file, list);
-    FastListDotFileDrawArrows  (graph_dump_file, list);
+    FastListDotFileInfo        (graph_dump_file, list, list_num);
+    FastListDotFileOutputElems (graph_dump_file, list, list_num);
+
+    FastListDotFileCenterElems (graph_dump_file, list, list_num);
+    FastListDotFileDrawArrows  (graph_dump_file, list, list_num);
+
+    list_num++;
 
     return LIST_FUNC_STATUS_OK;
 }
@@ -169,15 +173,16 @@ ListFuncStatus FastListDotFileEnd (FILE *dot_file) {
     return LIST_FUNC_STATUS_OK;
 }
 
-ListFuncStatus FastListDotFileInfo (FILE *dot_file, const FastList *list_for_info) {
+ListFuncStatus FastListDotFileInfo (FILE *dot_file, const FastList *list_for_info, const int list_num) {
 
     assert (dot_file);
 
-    fprintf(dot_file, "info [shape = record, style = filled, fillcolor = \"yellow\","
+    fprintf(dot_file, "Linfo_%d [shape = record, style = filled, fillcolor = \"yellow\","
                       "label = \"FREE: %" PRId64 " | SIZE: %" PRId64 " | CAPACITY: %" PRId64 "\","
                       "fontcolor = \"black\", fontsize = 22];\n",
-                      (list_for_info -> controlItems).free, list_for_info -> list_size,
-                      list_for_info -> capacity);
+                      list_num, (list_for_info -> controlItems).free, 
+                                list_for_info -> list_size,
+                                list_for_info -> capacity);
 
     return LIST_FUNC_STATUS_OK;
 }
@@ -208,14 +213,15 @@ ListFuncStatus FastListDotFileColorElem (FILE *dot_file_for_color, const FastLis
 }
 
 
-ListFuncStatus FastListDotFileOutputElems (FILE *dot_file, const FastList *list_for_output_elems) {
+ListFuncStatus FastListDotFileOutputElems (FILE *dot_file, const FastList *list_for_output_elems, 
+                                           const int list_num) {
 
     assert (dot_file);
     assert (list_for_output_elems);
 
     for (size_t i = 0; i < (size_t) (list_for_output_elems -> capacity); i++) {
 
-        fprintf (dot_file, "%zu [shape=Mrecord, style=filled, ", i);
+        fprintf (dot_file, "L%zu_%d [shape=Mrecord, style=filled, ", i, list_num);
 
         if (i != DUMMY_ELEM_POS)
             FastListDotFileColorElem (dot_file, list_for_output_elems, i);
@@ -227,7 +233,7 @@ ListFuncStatus FastListDotFileOutputElems (FILE *dot_file, const FastList *list_
 
         if ((list_for_output_elems -> mainItems)[i].value == POISON) {
 
-            fprintf(dot_file, "index: %zu | value: POISON| next: %" PRId64 "| prev: %" PRId64 "\" ];\n",
+            fprintf(dot_file, "index: %zu | value: POISON | next: %" PRId64 "| prev: %" PRId64 "\" ];\n",
                               i,
                               (list_for_output_elems -> mainItems)[i].next,
                               (list_for_output_elems -> mainItems)[i].prev);
@@ -247,7 +253,8 @@ ListFuncStatus FastListDotFileOutputElems (FILE *dot_file, const FastList *list_
 }
 
 ListFuncStatus FastListDotFileDrawArrows (FILE *dot_file_for_arrows,
-                                          const FastList *list_for_draw_arrows) {
+                                          const FastList *list_for_draw_arrows, 
+                                          const int list_num) {
 
     assert (dot_file_for_arrows);
     assert (list_for_draw_arrows);
@@ -257,16 +264,16 @@ ListFuncStatus FastListDotFileDrawArrows (FILE *dot_file_for_arrows,
         if ((list_for_draw_arrows -> mainItems)[i].next  == -1 &&
             (list_for_draw_arrows -> mainItems)[i].value == POISON)
 
-            fprintf (dot_file_for_arrows, "%zu -> %" PRId64 " [weight = 0, color = \"red\"];\n",
-                                          i, (list_for_draw_arrows -> mainItems)[i].prev);
+            fprintf (dot_file_for_arrows, "L%zu_%d -> L%" PRId64 "_%d [weight = 0, color = \"red\"];\n",
+                                          i, list_num, (list_for_draw_arrows -> mainItems)[i].prev, list_num);
 
         else {
 
-            fprintf (dot_file_for_arrows, "%zu -> %" PRId64 " [weight = 0, color = \"blue\"];\n",
-                                          i, (list_for_draw_arrows -> mainItems)[i].next);
+            fprintf (dot_file_for_arrows, "L%zu_%d -> L%" PRId64 "_%d [weight = 0, color = \"blue\"];\n",
+                                          i, list_num, (list_for_draw_arrows -> mainItems)[i].next, list_num);
 
-            fprintf (dot_file_for_arrows, "%zu -> %" PRId64 " [weight = 0, color = \"green\"];\n",
-                                          i, (list_for_draw_arrows -> mainItems)[i].prev);
+            fprintf (dot_file_for_arrows, "L%zu_%d -> L%" PRId64 "_%d [weight = 0, color = \"green\"];\n",
+                                          i, list_num, (list_for_draw_arrows -> mainItems)[i].prev, list_num);
         }
     }
 
@@ -274,17 +281,18 @@ ListFuncStatus FastListDotFileDrawArrows (FILE *dot_file_for_arrows,
 }
 
 ListFuncStatus FastListDotFileCenterElems (FILE *dot_file_for_center,
-                                           const FastList *list_for_center_elems) {
+                                           const FastList *list_for_center_elems, 
+                                           const int list_num) {
 
     assert (dot_file_for_center);
     assert (list_for_center_elems);
 
-    fprintf (dot_file_for_center, "info -> 0 [color = \"white\", style = invis];\n");
+    fprintf (dot_file_for_center, "Linfo_%d -> L0_%d [color = \"white\", style = invis];\n", list_num, list_num);
 
     for (size_t i = 0; i < (size_t) (list_for_center_elems -> capacity) - 1; i++) {
 
-        fprintf (dot_file_for_center, "%zu -> %zu [color = \"white\", style = invis];\n",
-                                      i, i + 1);
+        fprintf (dot_file_for_center, "L%zu_%d -> L%zu_%d [color = \"white\", style = invis];\n",
+                                      i, list_num, i + 1, list_num);
     }
 
     return LIST_FUNC_STATUS_OK;

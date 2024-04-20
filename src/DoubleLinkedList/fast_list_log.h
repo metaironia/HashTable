@@ -54,18 +54,21 @@ ListFuncStatus FastListDotFileEnd (FILE *dot_file);
 
 ListFuncStatus FastListDotFilePrint (FILE *graph_dump_file, const FastList *list);
 
-ListFuncStatus FastListDotFileInfo (FILE *dot_file, const FastList *list_for_info);
+ListFuncStatus FastListDotFileInfo (FILE *dot_file, const FastList *list_for_info, const int list_num);
 
 ListFuncStatus FastListDotFileColorElem (FILE *dot_file_for_color, const FastList *list_for_choose_color,
                                          const size_t index);
 
-ListFuncStatus FastListDotFileOutputElems (FILE *dot_file, const FastList *list_for_output_elems);
+ListFuncStatus FastListDotFileOutputElems (FILE *dot_file, const FastList *list_for_output_elems, 
+                                           const int list_num);
 
 ListFuncStatus FastListDotFileDrawArrows (FILE *dot_file_for_arrows,
-                                          const FastList *list_for_draw_arrows);
+                                          const FastList *list_for_draw_arrows,
+                                          const int list_nums);
 
 ListFuncStatus FastListDotFileCenterElems (FILE * dot_file_for_center,
-                                           const FastList *list_for_center_elems);
+                                           const FastList *list_for_center_elems, 
+                                           const int list_num);
 
 ListFuncStatus FastListDotFileColorDummy (FILE *dot_file, const FastList *list_for_output_dummy);
 
