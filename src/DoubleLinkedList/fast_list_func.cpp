@@ -329,3 +329,20 @@ ListFuncStatus FastListIncreaseCapacity (FastList *const list_for_increase_cap) 
 
     return LIST_FUNC_STATUS_OK;
 }
+
+ListFuncStatus FastListFindElem (FastList *list, FastListElem_t value_to_find) {
+
+    LIST_VERIFY (list);
+
+    int64_t curr_index = (list -> mainItems)[DUMMY_ELEM_POS].next;
+
+    while (curr_index != DUMMY_ELEM_POS) {
+
+        if (strcmp ((list -> mainItems)[curr_index].value, value_to_find) == 0)
+            return LIST_FUNC_STATUS_OK; 
+    
+        curr_index = (list -> mainItems)[curr_index].next; 
+    }
+
+    return LIST_FUNC_STATUS_FAIL;
+}

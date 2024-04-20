@@ -111,4 +111,6 @@ ListFuncStatus FastListGetElem (const FastList *const list_for_get_elem, const i
 
 ListFuncStatus FastListIncreaseCapacity (FastList *const list_for_increase_cap);
 
+ListFuncStatus FastListFindElem (FastList *list, FastListElem_t value_to_find);
+
 #endif
