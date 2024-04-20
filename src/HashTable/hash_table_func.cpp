@@ -50,12 +50,18 @@ HashTableFuncStatus HashTableDtor (HashTable *hash_table) {
 
     return HASH_TABLE_FUNC_STATUS_OK;
 }
-/*
+
 HashTableFuncStatus HashTableInsert (HashTable *hash_table, const HashTableElem_t data, const int64_t key) {
 
     assert (hash_table);
 
-    (HASH_TABLE_CELL_ + i)
+    int64_t   cell_num = key % HASH_TABLE_SIZE_;
+    FastList *cell_ptr = HASH_TABLE_CELL_ + cell_num;
 
+    int64_t stub = 0;
+
+    if (FastListFindElem (cell_ptr, data) == LIST_FUNC_STATUS_FAIL)
+        FastListAddElemAfter (cell_ptr, DUMMY_ELEM_POS, &stub, data);
+
+    return HASH_TABLE_FUNC_STATUS_OK;
 }
-*/

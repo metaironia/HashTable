@@ -30,4 +30,6 @@ HashTableFuncStatus HashTableDataDtor (HashTable *hash_table);
 
 HashTableFuncStatus HashTableDtor (HashTable *hash_table);
 
+HashTableFuncStatus HashTableInsert (HashTable *hash_table, const HashTableElem_t data, const int64_t key);
+
 #endif
