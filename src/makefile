@@ -7,7 +7,7 @@ WARNINGS=-Wshadow -Winit-self -Wcast-align -Wundef -Wfloat-equal -Winline -Wredu
 	 -Wempty-body -Wformat-security -Wformat=2 -Wignored-qualifiers -Wlogical-op -Wno-missing-field-initializers \
 	 -Wnon-virtual-dtor -Woverloaded-virtual -Wpointer-arith -Wsign-promo -Wstack-usage=8192 -Wstrict-aliasing \
 	 -Wstrict-null-sentinel -Wtype-limits -Wwrite-strings -Werror=vla -D_DEBUG -D_EJUDGE_CLIENT_SIDE 
-SOURCES= main.cpp HashTable/hash_table_func.cpp DoubleLinkedList/fast_list_func.cpp \
+SOURCES= main.cpp HashTable/hash_table_func.cpp HashTable/hash_table_log.cpp DoubleLinkedList/fast_list_func.cpp \
 	 DoubleLinkedList/fast_list_log.cpp		 		 
 OBJECTS=$(SOURCES:.cpp=.o)
 EXECUTABLE=hash_table_test
