@@ -1,10 +1,14 @@
 #ifndef HASH_TABLE_FUNC_H
 #define HASH_TABLE_FUNC_H
 
+#include <stdint.h>
+
 #include "../DoubleLinkedList/fast_list_func.h"
 
 const int DEFAULT_LIST_CAPACITY       = 1;
 const int DEFAULT_HASH_TABLE_CAPACITY = 100;
+
+typedef FastListElem_t HashTableElem_t;
 
 enum HashTableFuncStatus {
 
@@ -15,7 +19,7 @@ enum HashTableFuncStatus {
 struct HashTable {
 
     FastList *cell;
-    size_t size;
+    int64_t size;
 };
 
 HashTableFuncStatus HashTableCtor (HashTable *hash_table);

@@ -69,7 +69,7 @@ HashTableFuncStatus HashTableLoadDump (const HashTable *hash_table) {
 
     FILE *load_dump = fopen (HashTableLoadFileNameGen(), "w");
 
-    for (size_t i = 0; i < HASH_TABLE_SIZE_; i++)
+    for (size_t i = 0; i < (size_t) HASH_TABLE_SIZE_; i++)
         fprintf (load_dump, "%zu ; %" PRId64 "\n", i, (HASH_TABLE_CELL_ + i) -> list_size);
 
     fclose (load_dump);
