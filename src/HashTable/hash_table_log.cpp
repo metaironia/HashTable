@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <stdint.h>
+#include <inttypes.h>
 
 #include "../DoubleLinkedList/fast_list_log.h"
 
@@ -61,3 +62,30 @@ HashTableFuncStatus HashTableDotFilePrint (FILE *hash_table_dot, const HashTable
 
     return HASH_TABLE_FUNC_STATUS_OK;
 }
+
+HashTableFuncStatus HashTableLoadDump (const HashTable *hash_table) {
+
+    assert (hash_table);
+
+    FILE *load_dump = fopen (HashTableLoadFileNameGen(), "w");
+
+    for (size_t i = 0; i < HASH_TABLE_SIZE_; i++)
+        fprintf (load_dump, "%zu ; %" PRId64 "\n", i, (HASH_TABLE_CELL_ + i) -> list_size);
+
+    fclose (load_dump);
+    load_dump = NULL;
+
+    return HASH_TABLE_FUNC_STATUS_OK;
+}
+
+const char *HashTableLoadFileNameGen (void) {
+
+    static char load_file_name[MAX_FILE_NAME_LENGTH] = {};
+    static int  file_number                          = 0;
+
+    snprintf (load_file_name, MAX_FILE_NAME_LENGTH, "load_dump_%d.txt", file_number);
+
+    file_number++;
+
+    return load_file_name;
+} 
