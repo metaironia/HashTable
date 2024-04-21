@@ -111,9 +111,13 @@ HashTableFuncStatus HashTableClear (HashTable *hash_table) {
 
     for (size_t i = 0; i < (size_t) HASH_TABLE_SIZE_; i++) {
     
-        FillFastList (HASH_TABLE_CELL_ + i, DUMMY_ELEM_POS);
+        FastList *curr_cell = HASH_TABLE_CELL_ + i;
 
-        (HASH_TABLE_CELL_ + i) -> list_size = 0;
+        (curr_cell -> controlItems).free = 0;
+        curr_cell  -> list_size          = 0;
+
+        FillFastList                  (curr_cell, DUMMY_ELEM_POS);
+        FastListConnectNeighbourElems (curr_cell, DUMMY_ELEM_POS, DUMMY_ELEM_POS);
     }
 
     return HASH_TABLE_FUNC_STATUS_OK;
