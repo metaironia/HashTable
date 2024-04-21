@@ -25,6 +25,7 @@ clean:
 	 rm -f *.o hash_table_test.exe
 	 rm -f DoubleLinkedList/*.o
 	 rm -f HashTable/*.o
+	 rm -f TextPreparer/*.o
 
 rebuild: clean all
 

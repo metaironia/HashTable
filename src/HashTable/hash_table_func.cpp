@@ -108,8 +108,62 @@ HashTableFuncStatus HashTableClear (HashTable *hash_table) {
 
     assert (hash_table);
 
-    for (size_t i = 0; i < HASH_TABLE_SIZE_; i++)
+    for (size_t i = 0; i < (size_t) HASH_TABLE_SIZE_; i++) {
+    
         FillFastList (HASH_TABLE_CELL_ + i, DUMMY_ELEM_POS);
+
+        (HASH_TABLE_CELL_ + i) -> list_size = 0;
+    }
+
+    return HASH_TABLE_FUNC_STATUS_OK;
+}
+
+HashTableFuncStatus HashTableTestHashes (const char *input_file_name) {
+
+    assert (input_file_name);
+
+    HashTable hash_table = {};
+    HashTableCtor (&hash_table);
+
+    HashTableReadData (input_file_name, &hash_table, FirstHash);
+    HashTableLoadDump (&hash_table);
+
+    HashTableClear (&hash_table);
+
+    HashTableReadData (input_file_name, &hash_table, SecondHash);
+    HashTableLoadDump (&hash_table);
+
+    HashTableClear (&hash_table);
+
+    HashTableReadData (input_file_name, &hash_table, ThirdHash);
+    HashTableLoadDump (&hash_table);
+
+    HashTableClear (&hash_table);
+
+    HashTableReadData (input_file_name, &hash_table, FourthHash);
+    HashTableLoadDump (&hash_table);
+
+    HashTableClear (&hash_table);
+
+    HashTableReadData (input_file_name, &hash_table, FifthHash);
+    HashTableLoadDump (&hash_table);
+
+    HashTableClear (&hash_table);
+
+    HashTableReadData (input_file_name, &hash_table, SixthHash);
+    HashTableLoadDump (&hash_table);
+
+    HashTableClear (&hash_table);
+
+    HashTableReadData (input_file_name, &hash_table, SeventhHash);
+    HashTableLoadDump (&hash_table);
+
+    HashTableClear (&hash_table);
+
+    HashTableReadData (input_file_name, &hash_table, EighthHash);
+    HashTableLoadDump (&hash_table);
+
+    HashTableDtor (&hash_table);
 
     return HASH_TABLE_FUNC_STATUS_OK;
 }

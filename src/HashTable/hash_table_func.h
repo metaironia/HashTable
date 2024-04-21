@@ -37,4 +37,6 @@ HashTableFuncStatus HashTableReadData (const char *input_file_name, HashTable *h
 
 HashTableFuncStatus HashTableClear (HashTable *hash_table);
 
+HashTableFuncStatus HashTableTestHashes (const char *input_file_name);
+
 #endif

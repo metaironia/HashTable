@@ -1,47 +1,24 @@
 #include <stdio.h>
 #include <assert.h>
 
+#include "DoubleLinkedList/fast_list_func.h"
+#include "DoubleLinkedList/fast_list_log.h"
+
+#include "HashTable/hash_func.h"
 #include "HashTable/hash_table_func.h"
+#include "HashTable/hash_table_log.h"
+
+#include "TextPreparer/text_preparer.h"
 
 int main (const int argc, const char *argv[]) {
 
-    HashTable hash_table = {};
-    HashTableCtor (&hash_table);
+    if (argc < 2 || argc > 2) {
 
-    HashTableDtor (&hash_table);
+        fprintf (stderr, "Pass only one argument (file to read), please.\n");
+        return -1;
+    }
 
-    /*
-    int list_capacity = 5;
-    
-    FastList lst = {};
-    FastListCtor (&lst, list_capacity);
-
-    FAST_LIST_DUMP (&lst);
-
-    size_t test_pos = DUMMY_ELEM_POS;
-
-    FastListAddElemAfter (&lst, test_pos, &test_pos, 10);
-    FastListAddElemAfter (&lst, test_pos, &test_pos, 13);
-    FastListAddElemAfter (&lst, test_pos, &test_pos, 20);
-    FastListAddElemAfter (&lst, test_pos, &test_pos, 167);
-
-    FastListRemoveElem (&lst, 3);
-
-    FastListGraphDump (&lst);
-
-    FastListDtor (&lst); */
-
-//    ClassicList lst = {};
-//
-//    ClassicListCtor (&lst, list_capacity);
-//
-//    CLASSIC_LIST_DUMP (&lst);
-//
-//    ClassicListMainItems *test_pos = &(lst.mainItems)[DUMMY_ELEM_POS];
-//
-//    ClassicListAddElemAfter (&lst, test_pos, &test_pos, 10);
-//
-//    ClassicListGraphDump (&lst);
+    HashTableTestHashes (argv[1]);
 
     return 0;
 }
