@@ -16,7 +16,7 @@ EXECUTABLE=hash_table_test
 all: $(EXECUTABLE)
 
 $(EXECUTABLE): $(OBJECTS)
-	$(CC) $(WARNINGS) $^ -o $@
+	$(CC) $(CFLAGS) $(WARNINGS) $^ -o $@
 
 %.o : %.cpp
 	$(CC) -c $(CFLAGS) $(WARNINGS) $< -o $@                    
