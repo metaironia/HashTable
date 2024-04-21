@@ -6,7 +6,7 @@
 #include "../DoubleLinkedList/fast_list_func.h"
 
 const int DEFAULT_LIST_CAPACITY       = 1;
-const int DEFAULT_HASH_TABLE_CAPACITY = 100;
+const int DEFAULT_HASH_TABLE_CAPACITY = 787;
 
 typedef FastListElem_t HashTableElem_t;
 
@@ -22,7 +22,7 @@ struct HashTable {
     int64_t size;
 };
 
-HashTableFuncStatus HashTableCtor (HashTable *hash_table);
+HashTableFuncStatus HashTableCtor (HashTable *hash_table, int64_t hash_table_capacity);
 
 HashTableFuncStatus HashTableDataCtor (HashTable *hash_table);
 

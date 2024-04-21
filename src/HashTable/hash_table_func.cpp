@@ -11,11 +11,11 @@
 #include "hash_table_dsl.h"
 #include "hash_table_log.h"
 
-HashTableFuncStatus HashTableCtor (HashTable *hash_table) {
+HashTableFuncStatus HashTableCtor (HashTable *hash_table, int64_t hash_table_capacity) {
 
     assert (hash_table);
 
-    HASH_TABLE_SIZE_ = DEFAULT_HASH_TABLE_CAPACITY;
+    HASH_TABLE_SIZE_ = hash_table_capacity;
 
     if (HashTableDataCtor (hash_table) == HASH_TABLE_FUNC_STATUS_FAIL)
         return HASH_TABLE_FUNC_STATUS_FAIL;
@@ -128,7 +128,7 @@ HashTableFuncStatus HashTableTestHashes (const char *input_file_name) {
     assert (input_file_name);
 
     HashTable hash_table = {};
-    HashTableCtor (&hash_table);
+    HashTableCtor (&hash_table, DEFAULT_HASH_TABLE_CAPACITY);
 
     if (HashTableReadData (input_file_name, &hash_table, FirstHash) == HASH_TABLE_FUNC_STATUS_FAIL)
         return HASH_TABLE_FUNC_STATUS_FAIL;
@@ -147,6 +147,16 @@ HashTableFuncStatus HashTableTestHashes (const char *input_file_name) {
 
     HashTableLoadDump (&hash_table);
     HashTableClear    (&hash_table);
+
+    HashTable hash_table_cap_101 = {};
+    HashTableCtor (&hash_table_cap_101, 101);
+
+    if (HashTableReadData (input_file_name, &hash_table_cap_101, FourthHash) == HASH_TABLE_FUNC_STATUS_FAIL)
+        return HASH_TABLE_FUNC_STATUS_FAIL;
+
+    HashTableLoadDump (&hash_table_cap_101);
+    
+    HashTableDtor     (&hash_table_cap_101);
 
     if (HashTableReadData (input_file_name, &hash_table, FourthHash) == HASH_TABLE_FUNC_STATUS_FAIL)
         return HASH_TABLE_FUNC_STATUS_FAIL;
