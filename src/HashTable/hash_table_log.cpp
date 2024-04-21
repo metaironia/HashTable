@@ -89,3 +89,10 @@ const char *HashTableLoadFileNameGen (void) {
 
     return load_file_name;
 } 
+
+HashTableFuncStatus HashTableVariancePrint (const double variance) {
+
+    printf ("variance of elements in hash table = %.2lf\n", variance);
+
+    return HASH_TABLE_FUNC_STATUS_OK;
+}

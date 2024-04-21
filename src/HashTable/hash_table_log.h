@@ -17,4 +17,6 @@ HashTableFuncStatus HashTableLoadDump (const HashTable *hash_table);
 
 const char *HashTableLoadFileNameGen (void);
 
+HashTableFuncStatus HashTableVariancePrint (const double variance);
+
 #endif

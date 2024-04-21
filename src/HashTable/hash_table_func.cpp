@@ -3,6 +3,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
 
 #include "../TextPreparer/text_preparer.h"
 
@@ -10,6 +11,12 @@
 #include "hash_table_func.h"
 #include "hash_table_dsl.h"
 #include "hash_table_log.h"
+
+#define HASH_ALGORITHM_VAR_PRINT(hash_table, algorithm_name)                                          \
+                                    {                                                                 \
+                                        printf (algorithm_name ":\n");                                \
+                                        HashTableVariancePrint (HashTableVarianceEval (hash_table));  \
+                                    }
 
 HashTableFuncStatus HashTableCtor (HashTable *hash_table, int64_t hash_table_capacity) {
 
@@ -123,6 +130,27 @@ HashTableFuncStatus HashTableClear (HashTable *hash_table) {
     return HASH_TABLE_FUNC_STATUS_OK;
 }
 
+double HashTableVarianceEval (const HashTable *hash_table) {
+
+    assert (hash_table);
+
+    size_t num_of_elems = 0;
+
+    for (size_t i = 0; i < ((size_t) HASH_TABLE_SIZE_); i++)
+        num_of_elems = ((HASH_TABLE_CELL_ + i) -> list_size);
+
+    const double average_num_of_elems = ((double) num_of_elems) / ((double) HASH_TABLE_SIZE_);
+
+    double variance = 0;
+
+    for (size_t i = 0; i < ((size_t) HASH_TABLE_SIZE_); i++)
+        variance += pow (((double) ((HASH_TABLE_CELL_ + i) -> list_size)) - average_num_of_elems, 2);
+
+    variance /= ((double) HASH_TABLE_SIZE_) - 1;  
+
+    return variance;
+}
+
 HashTableFuncStatus HashTableTestHashes (const char *input_file_name) {
 
     assert (input_file_name);
@@ -133,20 +161,23 @@ HashTableFuncStatus HashTableTestHashes (const char *input_file_name) {
     if (HashTableReadData (input_file_name, &hash_table, FirstHash) == HASH_TABLE_FUNC_STATUS_FAIL)
         return HASH_TABLE_FUNC_STATUS_FAIL;
 
-    HashTableLoadDump (&hash_table);
-    HashTableClear    (&hash_table);
+    HashTableLoadDump        (&hash_table);
+    HASH_ALGORITHM_VAR_PRINT (&hash_table, "First hash");
+    HashTableClear           (&hash_table);
 
     if (HashTableReadData (input_file_name, &hash_table, SecondHash) == HASH_TABLE_FUNC_STATUS_FAIL)
         return HASH_TABLE_FUNC_STATUS_FAIL;
 
-    HashTableLoadDump (&hash_table);
-    HashTableClear    (&hash_table);
+    HashTableLoadDump        (&hash_table);
+    HASH_ALGORITHM_VAR_PRINT (&hash_table, "Second hash");
+    HashTableClear           (&hash_table);
 
     if (HashTableReadData (input_file_name, &hash_table, ThirdHash) == HASH_TABLE_FUNC_STATUS_FAIL)
         return HASH_TABLE_FUNC_STATUS_FAIL;
 
-    HashTableLoadDump (&hash_table);
-    HashTableClear    (&hash_table);
+    HashTableLoadDump        (&hash_table);
+    HASH_ALGORITHM_VAR_PRINT (&hash_table, "Third hash");
+    HashTableClear           (&hash_table);
 
     HashTable hash_table_cap_101 = {};
     HashTableCtor (&hash_table_cap_101, 101);
@@ -154,38 +185,44 @@ HashTableFuncStatus HashTableTestHashes (const char *input_file_name) {
     if (HashTableReadData (input_file_name, &hash_table_cap_101, FourthHash) == HASH_TABLE_FUNC_STATUS_FAIL)
         return HASH_TABLE_FUNC_STATUS_FAIL;
 
-    HashTableLoadDump (&hash_table_cap_101);
-    
+    HashTableLoadDump        (&hash_table_cap_101);
+    HASH_ALGORITHM_VAR_PRINT (&hash_table_cap_101, "Fourth hash, hash table capacity = 101");
+
     HashTableDtor     (&hash_table_cap_101);
 
     if (HashTableReadData (input_file_name, &hash_table, FourthHash) == HASH_TABLE_FUNC_STATUS_FAIL)
         return HASH_TABLE_FUNC_STATUS_FAIL;
 
-    HashTableLoadDump (&hash_table);
-    HashTableClear    (&hash_table);
+    HashTableLoadDump        (&hash_table);
+    HASH_ALGORITHM_VAR_PRINT (&hash_table, "Fourth hash, load factor ~= 7");
+    HashTableClear           (&hash_table);
 
     if (HashTableReadData (input_file_name, &hash_table, FifthHash) == HASH_TABLE_FUNC_STATUS_FAIL)
         return HASH_TABLE_FUNC_STATUS_FAIL;
 
-    HashTableLoadDump (&hash_table);
-    HashTableClear    (&hash_table);
+    HashTableLoadDump        (&hash_table);
+    HASH_ALGORITHM_VAR_PRINT (&hash_table, "Fifth hash");
+    HashTableClear           (&hash_table);
 
     if (HashTableReadData (input_file_name, &hash_table, SixthHash) == HASH_TABLE_FUNC_STATUS_FAIL)
         return HASH_TABLE_FUNC_STATUS_FAIL;
 
-    HashTableLoadDump (&hash_table);
-    HashTableClear    (&hash_table);
+    HashTableLoadDump        (&hash_table);
+    HASH_ALGORITHM_VAR_PRINT (&hash_table, "Sixth hash");
+    HashTableClear           (&hash_table);
 
     if (HashTableReadData (input_file_name, &hash_table, SeventhHash) == HASH_TABLE_FUNC_STATUS_FAIL)
         return HASH_TABLE_FUNC_STATUS_FAIL;
 
-    HashTableLoadDump (&hash_table);
-    HashTableClear    (&hash_table);
+    HashTableLoadDump        (&hash_table);
+    HASH_ALGORITHM_VAR_PRINT (&hash_table, "Seventh hash");
+    HashTableClear           (&hash_table);
 
     if (HashTableReadData (input_file_name, &hash_table, EighthHash) == HASH_TABLE_FUNC_STATUS_FAIL)
         return HASH_TABLE_FUNC_STATUS_FAIL;
 
-    HashTableLoadDump (&hash_table);
+    HashTableLoadDump        (&hash_table);
+    HASH_ALGORITHM_VAR_PRINT (&hash_table, "Eighth hash");
 
     HashTableDtor (&hash_table);
 
