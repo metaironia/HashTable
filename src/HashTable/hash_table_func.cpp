@@ -6,9 +6,9 @@
 
 #include "../TextPreparer/text_preparer.h"
 
+#include "hash_func.h"
 #include "hash_table_func.h"
 #include "hash_table_dsl.h"
-
 #include "hash_table_log.h"
 
 HashTableFuncStatus HashTableCtor (HashTable *hash_table) {
@@ -100,6 +100,16 @@ HashTableFuncStatus HashTableReadData (const char *input_file_name, HashTable *h
         if (fscanf_status != EOF && fscanf_status != 0)
             HashTableInsert (hash_table, strdup (word), hash_func (word));
     }
+
+    return HASH_TABLE_FUNC_STATUS_OK;
+}
+
+HashTableFuncStatus HashTableClear (HashTable *hash_table) {
+
+    assert (hash_table);
+
+    for (size_t i = 0; i < HASH_TABLE_SIZE_; i++)
+        FillFastList (HASH_TABLE_CELL_ + i, DUMMY_ELEM_POS);
 
     return HASH_TABLE_FUNC_STATUS_OK;
 }
