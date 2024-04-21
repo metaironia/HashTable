@@ -86,7 +86,8 @@ HashTableFuncStatus HashTableReadData (const char *input_file_name, HashTable *h
     
     if (!(data_file = fopen (TextPreparedFileNameGen (input_file_name), "r"))) {
 
-        TextPrepare (input_file_name);
+        if (TextPrepare (input_file_name) == PREPARING_FUNC_STATUS_FAIL)
+            return HASH_TABLE_FUNC_STATUS_FAIL;
 
         data_file = fopen (TextPreparedFileNameGen (input_file_name), "r");
     }
@@ -125,42 +126,51 @@ HashTableFuncStatus HashTableTestHashes (const char *input_file_name) {
     HashTable hash_table = {};
     HashTableCtor (&hash_table);
 
-    HashTableReadData (input_file_name, &hash_table, FirstHash);
+    if (HashTableReadData (input_file_name, &hash_table, FirstHash) == HASH_TABLE_FUNC_STATUS_FAIL)
+        return HASH_TABLE_FUNC_STATUS_FAIL;
+
     HashTableLoadDump (&hash_table);
+    HashTableClear    (&hash_table);
 
-    HashTableClear (&hash_table);
+    if (HashTableReadData (input_file_name, &hash_table, SecondHash) == HASH_TABLE_FUNC_STATUS_FAIL)
+        return HASH_TABLE_FUNC_STATUS_FAIL;
 
-    HashTableReadData (input_file_name, &hash_table, SecondHash);
     HashTableLoadDump (&hash_table);
+    HashTableClear    (&hash_table);
 
-    HashTableClear (&hash_table);
+    if (HashTableReadData (input_file_name, &hash_table, ThirdHash) == HASH_TABLE_FUNC_STATUS_FAIL)
+        return HASH_TABLE_FUNC_STATUS_FAIL;
 
-    HashTableReadData (input_file_name, &hash_table, ThirdHash);
     HashTableLoadDump (&hash_table);
+    HashTableClear    (&hash_table);
 
-    HashTableClear (&hash_table);
+    if (HashTableReadData (input_file_name, &hash_table, FourthHash) == HASH_TABLE_FUNC_STATUS_FAIL)
+        return HASH_TABLE_FUNC_STATUS_FAIL;
 
-    HashTableReadData (input_file_name, &hash_table, FourthHash);
     HashTableLoadDump (&hash_table);
+    HashTableClear    (&hash_table);
 
-    HashTableClear (&hash_table);
+    if (HashTableReadData (input_file_name, &hash_table, FifthHash) == HASH_TABLE_FUNC_STATUS_FAIL)
+        return HASH_TABLE_FUNC_STATUS_FAIL;
 
-    HashTableReadData (input_file_name, &hash_table, FifthHash);
     HashTableLoadDump (&hash_table);
+    HashTableClear    (&hash_table);
 
-    HashTableClear (&hash_table);
+    if (HashTableReadData (input_file_name, &hash_table, SixthHash) == HASH_TABLE_FUNC_STATUS_FAIL)
+        return HASH_TABLE_FUNC_STATUS_FAIL;
 
-    HashTableReadData (input_file_name, &hash_table, SixthHash);
     HashTableLoadDump (&hash_table);
+    HashTableClear    (&hash_table);
 
-    HashTableClear (&hash_table);
+    if (HashTableReadData (input_file_name, &hash_table, SeventhHash) == HASH_TABLE_FUNC_STATUS_FAIL)
+        return HASH_TABLE_FUNC_STATUS_FAIL;
 
-    HashTableReadData (input_file_name, &hash_table, SeventhHash);
     HashTableLoadDump (&hash_table);
+    HashTableClear    (&hash_table);
 
-    HashTableClear (&hash_table);
+    if (HashTableReadData (input_file_name, &hash_table, EighthHash) == HASH_TABLE_FUNC_STATUS_FAIL)
+        return HASH_TABLE_FUNC_STATUS_FAIL;
 
-    HashTableReadData (input_file_name, &hash_table, EighthHash);
     HashTableLoadDump (&hash_table);
 
     HashTableDtor (&hash_table);
