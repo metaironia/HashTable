@@ -32,7 +32,7 @@ uint32_t SixthHash (const HashTableElem_t value);
 
 uint32_t SeventhHash (const HashTableElem_t value);
 
-uint32_t EighthHash (const void *key_void, const uint32_t len, const uint32_t seed);
+uint32_t EighthHash (const HashTableElem_t value);
 
 uint32_t MyRol (const uint32_t number, int num_to_rol);
 
