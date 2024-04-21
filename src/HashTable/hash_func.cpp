@@ -81,7 +81,7 @@ uint32_t SeventhHash (const HashTableElem_t value) {
 uint32_t EighthHash (const HashTableElem_t value) {
 
     const uint8_t *key  = (const uint8_t *) value;
-    const uint32_t len  = strlen ((const char *) key);
+    const uint32_t len  = (uint32_t) strlen ((const char *) key);
     const uint32_t seed = 0;
           
     uint32_t hash             = seed;
