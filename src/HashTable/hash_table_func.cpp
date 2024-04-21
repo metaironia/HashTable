@@ -1,9 +1,15 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <string.h>
+
+#include "../TextPreparer/text_preparer.h"
 
 #include "hash_table_func.h"
 #include "hash_table_dsl.h"
+
+#include "hash_table_log.h"
 
 HashTableFuncStatus HashTableCtor (HashTable *hash_table) {
 
@@ -65,6 +71,35 @@ HashTableFuncStatus HashTableInsert (HashTable *hash_table, const HashTableElem_
 
     if (FastListFindElem (cell_ptr, data) == LIST_FUNC_STATUS_FAIL)
         FastListAddElemAfter (cell_ptr, DUMMY_ELEM_POS, &stub, data);
+
+    return HASH_TABLE_FUNC_STATUS_OK;
+}
+
+HashTableFuncStatus HashTableReadData (const char *input_file_name, HashTable *hash_table, 
+                                       uint32_t (*hash_func) (const HashTableElem_t)) {
+
+    assert (input_file_name);
+    assert (hash_table);
+    assert (hash_func);
+
+    FILE *data_file = NULL;
+    
+    if (!(data_file = fopen (TextPreparedFileNameGen (input_file_name), "r"))) {
+
+        TextPrepare (input_file_name);
+
+        data_file = fopen (TextPreparedFileNameGen (input_file_name), "r");
+    }
+    
+    char word[MAX_WORD_LENGTH] = {};
+
+    while (!feof (data_file)) {
+
+        int fscanf_status = fscanf (data_file, "%s", word);
+
+        if (fscanf_status != EOF && fscanf_status != 0)
+            HashTableInsert (hash_table, strdup (word), hash_func (word));
+    }
 
     return HASH_TABLE_FUNC_STATUS_OK;
 }
