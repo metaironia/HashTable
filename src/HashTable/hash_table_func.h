@@ -43,6 +43,8 @@ HashTableFuncStatus HashTableInsert (HashTable *hash_table, const HashTableElem_
 
 HashTableFuncStatus HashTableFind (HashTable *hash_table, const HashTableElem_t data);
 
+HashTableFuncStatus HashTableFindBenchmark (HashTable *hash_table, Words *words);
+
 HashTableFuncStatus HashTableReadData (const char *input_file_name, HashTable *hash_table, 
                                        uint32_t (*hash_func) (const HashTableElem_t));
 

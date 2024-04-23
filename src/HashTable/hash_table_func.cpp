@@ -274,15 +274,7 @@ HashTableFuncStatus HashTableTestFind (const char *input_file_name) {
     
     int64_t cycle_start = __rdtsc();
  
-    for (size_t i = 0; i < MAX_BENCHMARK_COMP_NUM; i++)
-        for (size_t word_num = 0; word_num < ((size_t) words_from_file.num_of_words); word_num++) {
-
-            char *curr_word = words_from_file.word + word_num * MAX_WORD_LENGTH; 
-
-            HashTableFind (&hash_table, curr_word);
-
-            curr_word += MAX_WORD_LENGTH;
-        }
+    HashTableFindBenchmark (&hash_table, &words_from_file);
 
     int64_t cycle_end = __rdtsc();
 
@@ -297,6 +289,26 @@ HashTableFuncStatus HashTableTestFind (const char *input_file_name) {
             "Cycles to compute all = %" PRId64 "\n",
             MAX_BENCHMARK_COMP_NUM,
             cycle_start, cycle_end, cycle_end - cycle_start);
+
+    return HASH_TABLE_FUNC_STATUS_OK;
+}
+
+HashTableFuncStatus HashTableFindBenchmark (HashTable *hash_table, Words *words) {
+
+    assert (hash_table);
+    assert (words);
+    assert (words -> word);
+
+    for (size_t i = 0; i < MAX_BENCHMARK_COMP_NUM; i++) {
+
+        char *curr_word = (words -> word);
+
+        for (size_t word_num = 0; word_num < ((size_t) words -> num_of_words); word_num++) {
+
+            //HashTableFind (hash_table, curr_word);
+            curr_word += MAX_WORD_LENGTH;
+        }
+    }
 
     return HASH_TABLE_FUNC_STATUS_OK;
 }
