@@ -4,6 +4,13 @@
 #include <stdio.h>
 #include <string.h>
 #include <math.h>
+#include <inttypes.h>
+
+#ifndef VISUAL_STUDIO
+    #include <immintrin.h>
+#else
+    #include <intrin.h>  // espessialy for visual studio msvc  
+#endif
 
 #include "../TextPreparer/text_preparer.h"
 
@@ -82,11 +89,11 @@ HashTableFuncStatus HashTableInsert (HashTable *hash_table, const HashTableElem_
     return HASH_TABLE_FUNC_STATUS_OK;
 }
 
-HashTableFuncStatus HashTableFind (HashTable *hash_table, const HashTableElem_t data, const int64_t key) {
+HashTableFuncStatus HashTableFind (HashTable *hash_table, const HashTableElem_t data) {
 
     assert (hash_table);
 
-    int64_t   cell_num = key % HASH_TABLE_SIZE_;
+    int64_t   cell_num = EighthHash (data) % HASH_TABLE_SIZE_;
     FastList *cell_ptr = HASH_TABLE_CELL_ + cell_num;
 
     if (FastListFindElem (cell_ptr, data) == LIST_FUNC_STATUS_FAIL)
@@ -262,14 +269,65 @@ HashTableFuncStatus HashTableTestFind (const char *input_file_name) {
         data_file = fopen (TextPreparedFileNameGen (input_file_name), "r");
     }
 
-    Words words_from_file = {};
-
-    for (size_t i = 0; !feof (data_file); i++) {
-
-        fscanf (data_file, "%s", words_from_file.word + i);
-
-        words_from_file.num_of_words++;
-
-    }
+    Words words_from_file = {};    
+    WordsCtor (data_file, &words_from_file);
     
+    int64_t cycle_start = __rdtsc();
+ 
+    for (size_t i = 0; i < MAX_BENCHMARK_COMP_NUM; i++)
+        for (size_t word_num = 0; word_num < ((size_t) words_from_file.num_of_words); word_num++) {
+
+            char *curr_word = words_from_file.word + word_num * MAX_WORD_LENGTH; 
+
+            HashTableFind (&hash_table, curr_word);
+
+            curr_word += MAX_WORD_LENGTH;
+        }
+
+    int64_t cycle_end = __rdtsc();
+
+    WordsDtor (&words_from_file);
+    
+    fclose (data_file);
+    data_file = NULL;
+
+    printf ("Hash table find benchmark, %d times\n"
+            "Initial CPU cycle     = %" PRId64 "\n"
+            "End CPU cycle         = %" PRId64 "\n"
+            "Cycles to compute all = %" PRId64 "\n",
+            MAX_BENCHMARK_COMP_NUM,
+            cycle_start, cycle_end, cycle_end - cycle_start);
+
+    return HASH_TABLE_FUNC_STATUS_OK;
+}
+
+HashTableFuncStatus WordsCtor (FILE *data_file, Words *words) {
+
+    assert (data_file);
+    assert (words);
+
+    for (; !feof (data_file); (words -> num_of_words)++)
+        fscanf (data_file, "%*s");
+
+    (words -> word) = (char *) calloc ((words -> num_of_words),
+                                       MAX_WORD_LENGTH);
+
+    fseek (data_file, 0, SEEK_SET);
+
+    for (size_t i = 0; !feof (data_file); i++)
+        fscanf (data_file, "%s", (words -> word) + i * MAX_WORD_LENGTH);
+
+    return HASH_TABLE_FUNC_STATUS_OK;
+}
+
+HashTableFuncStatus WordsDtor (Words *words) {
+
+    assert (words);
+
+    free (words -> word);
+    (words -> word) = NULL;   
+   
+    words -> num_of_words = 0;
+
+    return HASH_TABLE_FUNC_STATUS_OK;
 }

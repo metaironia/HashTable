@@ -4,18 +4,19 @@
 
 #include <stdint.h>
 
-#define LIST_VERIFY(list)   do {                                   \
-                                if (FastListVerify (list) != 0) {  \
-                                                                   \
-                                    FAST_LIST_DUMP (list);         \
-                                    return LIST_FUNC_STATUS_FAIL;  \
-                                }                                  \
-                            } while (0)
-
+#ifndef NDEBUG
+    #define LIST_VERIFY(list)   do {                                   \
+                                    if (FastListVerify (list) != 0) {  \
+                                                                    \
+                                        FAST_LIST_DUMP (list);         \
+                                        return LIST_FUNC_STATUS_FAIL;  \
+                                    }                                  \
+                                } while (0)
+#else
+    #define LIST_VERIFY(list)
+#endif
 
 #define IS_ELEM_TYPE_FLOAT  0
-
-#define DEBUG
 
 #if IS_ELEM_TYPE_FLOAT
 
