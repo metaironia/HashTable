@@ -82,6 +82,19 @@ HashTableFuncStatus HashTableInsert (HashTable *hash_table, const HashTableElem_
     return HASH_TABLE_FUNC_STATUS_OK;
 }
 
+HashTableFuncStatus HashTableFind (HashTable *hash_table, const HashTableElem_t data, const int64_t key) {
+
+    assert (hash_table);
+
+    int64_t   cell_num = key % HASH_TABLE_SIZE_;
+    FastList *cell_ptr = HASH_TABLE_CELL_ + cell_num;
+
+    if (FastListFindElem (cell_ptr, data) == LIST_FUNC_STATUS_FAIL)
+        return HASH_TABLE_FUNC_STATUS_FAIL;
+
+    return HASH_TABLE_FUNC_STATUS_OK;
+}
+
 HashTableFuncStatus HashTableReadData (const char *input_file_name, HashTable *hash_table, 
                                        uint32_t (*hash_func) (const HashTableElem_t)) {
 

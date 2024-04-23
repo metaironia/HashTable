@@ -32,6 +32,8 @@ HashTableFuncStatus HashTableDtor (HashTable *hash_table);
 
 HashTableFuncStatus HashTableInsert (HashTable *hash_table, const HashTableElem_t data, const int64_t key);
 
+HashTableFuncStatus HashTableFind (HashTable *hash_table, const HashTableElem_t data, const int64_t key);
+
 HashTableFuncStatus HashTableReadData (const char *input_file_name, HashTable *hash_table, 
                                        uint32_t (*hash_func) (const HashTableElem_t));
 
