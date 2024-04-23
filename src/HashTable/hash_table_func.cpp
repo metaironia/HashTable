@@ -104,7 +104,7 @@ HashTableFuncStatus HashTableReadData (const char *input_file_name, HashTable *h
 
     FILE *data_file = NULL;
     
-    if (!(data_file = fopen (TextPreparedFileNameGen (input_file_name), "r"))) {
+    if (!(data_file = fopen (TextPreparedFileNameGen (input_file_name), "r"))) {        // TODO as func
 
         if (TextPrepare (input_file_name) == PREPARING_FUNC_STATUS_FAIL)
             return HASH_TABLE_FUNC_STATUS_FAIL;
@@ -240,4 +240,36 @@ HashTableFuncStatus HashTableTestHashes (const char *input_file_name) {
     HashTableDtor (&hash_table);
 
     return HASH_TABLE_FUNC_STATUS_OK;
+}
+
+HashTableFuncStatus HashTableTestFind (const char *input_file_name) {
+
+    assert (input_file_name);
+
+    HashTable hash_table = {};
+    HashTableCtor (&hash_table, DEFAULT_HASH_TABLE_CAPACITY);
+
+    if (HashTableReadData (input_file_name, &hash_table, EighthHash) == HASH_TABLE_FUNC_STATUS_FAIL)
+        return HASH_TABLE_FUNC_STATUS_FAIL;
+
+    FILE *data_file = NULL;
+
+    if (!(data_file = fopen (TextPreparedFileNameGen (input_file_name), "r"))) {
+
+        if (TextPrepare (input_file_name) == PREPARING_FUNC_STATUS_FAIL)
+            return HASH_TABLE_FUNC_STATUS_FAIL;
+
+        data_file = fopen (TextPreparedFileNameGen (input_file_name), "r");
+    }
+
+    Words words_from_file = {};
+
+    for (size_t i = 0; !feof (data_file); i++) {
+
+        fscanf (data_file, "%s", words_from_file.word + i);
+
+        words_from_file.num_of_words++;
+
+    }
+    
 }

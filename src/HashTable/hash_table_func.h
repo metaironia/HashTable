@@ -5,10 +5,12 @@
 
 #include "../DoubleLinkedList/fast_list_func.h"
 
+typedef FastListElem_t HashTableElem_t;
+
 const int DEFAULT_LIST_CAPACITY       = 1;
 const int DEFAULT_HASH_TABLE_CAPACITY = 787;
 
-typedef FastListElem_t HashTableElem_t;
+const int MAX_WORD_LENGTH = 32;
 
 enum HashTableFuncStatus {
 
@@ -20,6 +22,12 @@ struct HashTable {
 
     FastList *cell;
     int64_t size;
+};
+
+struct Words {
+
+    char **word;
+    int64_t num_of_words;
 };
 
 HashTableFuncStatus HashTableCtor (HashTable *hash_table, int64_t hash_table_capacity);
