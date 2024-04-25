@@ -18,21 +18,21 @@ const int MAGIC_NUM_FOR_ROL_2 = 13;
 const int MAGIC_NUM_FOR_BIT_SHIFT_1 = 16;
 const int MAGIC_NUM_FOR_BIT_SHIFT_2 = 13;
 
-uint32_t FirstHash (const HashTableElem_t value);
+uint32_t ConstHash (const HashTableElem_t value);
 
-uint32_t SecondHash (const HashTableElem_t value);
+uint32_t FirstSymHash (const HashTableElem_t value);
 
-uint32_t ThirdHash (const HashTableElem_t value);
+uint32_t LenHash (const HashTableElem_t value);
 
-uint32_t FourthHash (const HashTableElem_t value);
+uint32_t AsciiSumHash (const HashTableElem_t value);
 
-uint32_t FifthHash (const HashTableElem_t value);
+uint32_t AsciiSumDivLenHash (const HashTableElem_t value);
 
-uint32_t SixthHash (const HashTableElem_t value);
+uint32_t RorHash (const HashTableElem_t value);
 
-uint32_t SeventhHash (const HashTableElem_t value);
+uint32_t RolHash (const HashTableElem_t value);
 
-uint32_t EighthHash (const HashTableElem_t value);
+uint32_t MurmurHash (const HashTableElem_t value);
 
 uint32_t MyRol (const uint32_t number, int num_to_rol);
 

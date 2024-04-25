@@ -1,25 +1,26 @@
 #include <string.h>
 #include <stdint.h>
+#include <immintrin.h>
 
 #include "hash_table_func.h"
 #include "hash_func.h"
 
-uint32_t FirstHash (const HashTableElem_t value) {
+uint32_t ConstHash (const HashTableElem_t value) {
 
     return 0;
 }
 
-uint32_t SecondHash (const HashTableElem_t value) {
+uint32_t FirstSymHash (const HashTableElem_t value) {
 
     return ((int64_t) value[0]);
 }
 
-uint32_t ThirdHash (const HashTableElem_t value) {
+uint32_t LenHash (const HashTableElem_t value) {
 
     return ((uint32_t) strlen (value));
 }
 
-uint32_t FourthHash (const HashTableElem_t value) {
+uint32_t AsciiSumHash (const HashTableElem_t value) {
 
     uint32_t ascii_codes_sum = 0;
     uint32_t word_length     = (uint32_t) strlen (value);
@@ -30,7 +31,7 @@ uint32_t FourthHash (const HashTableElem_t value) {
     return ascii_codes_sum;
 }
 
-uint32_t FifthHash (const HashTableElem_t value) {
+uint32_t AsciiSumDivLenHash (const HashTableElem_t value) {
 
     uint32_t ascii_codes_sum = 0;
 
@@ -42,7 +43,7 @@ uint32_t FifthHash (const HashTableElem_t value) {
     return ((uint32_t) (ascii_codes_sum / word_length));
 }
 
-uint32_t SixthHash (const HashTableElem_t value) {
+uint32_t RorHash (const HashTableElem_t value) {
 
     uint32_t word_length = (uint32_t) strlen (value);
 
@@ -60,7 +61,7 @@ uint32_t SixthHash (const HashTableElem_t value) {
     return hash;
 }
 
-uint32_t SeventhHash (const HashTableElem_t value) {
+uint32_t RolHash (const HashTableElem_t value) {
 
     uint32_t word_length = (uint32_t) strlen (value);
 
@@ -78,10 +79,23 @@ uint32_t SeventhHash (const HashTableElem_t value) {
     return hash;
 }
 
-uint32_t EighthHash (const HashTableElem_t value) {
+uint32_t MurmurHash (const HashTableElem_t value) {
 
     const uint8_t *key  = (const uint8_t *) value;
     const uint32_t len  = (uint32_t) strlen ((const char *) key);
+/*
+    uint32_t len = 0;
+
+    __asm__ (".intel_syntax noprefix\n\t"
+                             "vlddqu ymm1, [%1]\n\t"
+                             "vpxor ymm2, ymm2, ymm2\n\t"
+                             "vpcmpeqb ymm1, ymm1, ymm2\n\t"
+                             "vpmovmskb %0, ymm1\n\t"
+                             "tzcnt %0, %0"
+                             : "=X" (len)
+                             : "r" (value));
+
+*/
     const uint32_t seed = 0;
           
     uint32_t hash             = seed;

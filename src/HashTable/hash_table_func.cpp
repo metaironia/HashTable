@@ -93,7 +93,7 @@ HashTableFuncStatus HashTableFind (HashTable *hash_table, const HashTableElem_t 
 
     assert (hash_table);
 
-    int64_t   cell_num = EighthHash (data) % HASH_TABLE_SIZE_;
+    int64_t   cell_num = MurmurHash (data) % HASH_TABLE_SIZE_;
     FastList *cell_ptr = HASH_TABLE_CELL_ + cell_num;
 
     if (FastListFindElem (cell_ptr, data) == LIST_FUNC_STATUS_FAIL)
@@ -126,10 +126,19 @@ HashTableFuncStatus HashTableReadData (const char *input_file_name, HashTable *h
         int fscanf_status = fscanf (data_file, "%s", word);
 
         if (fscanf_status != EOF && fscanf_status != 0)
-            HashTableInsert (hash_table, strdup (word), hash_func (word));
+            HashTableInsert (hash_table, MyStrdup32Bytes (word), hash_func (word));
     }
 
     return HASH_TABLE_FUNC_STATUS_OK;
+}
+
+char *MyStrdup32Bytes (const char *word) {
+
+    assert (word);
+
+    char *word_dup = (char *) calloc (1, 32);
+
+    return strcpy (word_dup, word);
 }
 
 HashTableFuncStatus HashTableClear (HashTable *hash_table) {
@@ -178,71 +187,71 @@ HashTableFuncStatus HashTableTestHashes (const char *input_file_name) {
     HashTable hash_table = {};
     HashTableCtor (&hash_table, DEFAULT_HASH_TABLE_CAPACITY);
 
-    if (HashTableReadData (input_file_name, &hash_table, FirstHash) == HASH_TABLE_FUNC_STATUS_FAIL)
+    if (HashTableReadData (input_file_name, &hash_table, ConstHash) == HASH_TABLE_FUNC_STATUS_FAIL)
         return HASH_TABLE_FUNC_STATUS_FAIL;
 
     HashTableLoadDump        (&hash_table);
-    HASH_ALGORITHM_VAR_PRINT (&hash_table, "First hash");
+    HASH_ALGORITHM_VAR_PRINT (&hash_table, "Const hash");
     HashTableClear           (&hash_table);
 
-    if (HashTableReadData (input_file_name, &hash_table, SecondHash) == HASH_TABLE_FUNC_STATUS_FAIL)
+    if (HashTableReadData (input_file_name, &hash_table, FirstSymHash) == HASH_TABLE_FUNC_STATUS_FAIL)
         return HASH_TABLE_FUNC_STATUS_FAIL;
 
     HashTableLoadDump        (&hash_table);
-    HASH_ALGORITHM_VAR_PRINT (&hash_table, "Second hash");
+    HASH_ALGORITHM_VAR_PRINT (&hash_table, "First symbol hash");
     HashTableClear           (&hash_table);
 
-    if (HashTableReadData (input_file_name, &hash_table, ThirdHash) == HASH_TABLE_FUNC_STATUS_FAIL)
+    if (HashTableReadData (input_file_name, &hash_table, LenHash) == HASH_TABLE_FUNC_STATUS_FAIL)
         return HASH_TABLE_FUNC_STATUS_FAIL;
 
     HashTableLoadDump        (&hash_table);
-    HASH_ALGORITHM_VAR_PRINT (&hash_table, "Third hash");
+    HASH_ALGORITHM_VAR_PRINT (&hash_table, "Length hash");
     HashTableClear           (&hash_table);
 
     HashTable hash_table_cap_101 = {};
     HashTableCtor (&hash_table_cap_101, 101);
 
-    if (HashTableReadData (input_file_name, &hash_table_cap_101, FourthHash) == HASH_TABLE_FUNC_STATUS_FAIL)
+    if (HashTableReadData (input_file_name, &hash_table_cap_101, AsciiSumHash) == HASH_TABLE_FUNC_STATUS_FAIL)
         return HASH_TABLE_FUNC_STATUS_FAIL;
 
     HashTableLoadDump        (&hash_table_cap_101);
-    HASH_ALGORITHM_VAR_PRINT (&hash_table_cap_101, "Fourth hash, hash table capacity = 101");
+    HASH_ALGORITHM_VAR_PRINT (&hash_table_cap_101, "Ascii sum hash, hash table capacity = 101");
 
     HashTableDtor     (&hash_table_cap_101);
 
-    if (HashTableReadData (input_file_name, &hash_table, FourthHash) == HASH_TABLE_FUNC_STATUS_FAIL)
+    if (HashTableReadData (input_file_name, &hash_table, AsciiSumHash) == HASH_TABLE_FUNC_STATUS_FAIL)
         return HASH_TABLE_FUNC_STATUS_FAIL;
 
     HashTableLoadDump        (&hash_table);
-    HASH_ALGORITHM_VAR_PRINT (&hash_table, "Fourth hash, load factor ~= 7");
+    HASH_ALGORITHM_VAR_PRINT (&hash_table, "Ascii sum hash, load factor ~= 7");
     HashTableClear           (&hash_table);
 
-    if (HashTableReadData (input_file_name, &hash_table, FifthHash) == HASH_TABLE_FUNC_STATUS_FAIL)
+    if (HashTableReadData (input_file_name, &hash_table, AsciiSumDivLenHash) == HASH_TABLE_FUNC_STATUS_FAIL)
         return HASH_TABLE_FUNC_STATUS_FAIL;
 
     HashTableLoadDump        (&hash_table);
-    HASH_ALGORITHM_VAR_PRINT (&hash_table, "Fifth hash");
+    HASH_ALGORITHM_VAR_PRINT (&hash_table, "Ascii sum div len hash");
     HashTableClear           (&hash_table);
 
-    if (HashTableReadData (input_file_name, &hash_table, SixthHash) == HASH_TABLE_FUNC_STATUS_FAIL)
+    if (HashTableReadData (input_file_name, &hash_table, RorHash) == HASH_TABLE_FUNC_STATUS_FAIL)
         return HASH_TABLE_FUNC_STATUS_FAIL;
 
     HashTableLoadDump        (&hash_table);
-    HASH_ALGORITHM_VAR_PRINT (&hash_table, "Sixth hash");
+    HASH_ALGORITHM_VAR_PRINT (&hash_table, "Ror hash");
     HashTableClear           (&hash_table);
 
-    if (HashTableReadData (input_file_name, &hash_table, SeventhHash) == HASH_TABLE_FUNC_STATUS_FAIL)
+    if (HashTableReadData (input_file_name, &hash_table, RolHash) == HASH_TABLE_FUNC_STATUS_FAIL)
         return HASH_TABLE_FUNC_STATUS_FAIL;
 
     HashTableLoadDump        (&hash_table);
-    HASH_ALGORITHM_VAR_PRINT (&hash_table, "Seventh hash");
+    HASH_ALGORITHM_VAR_PRINT (&hash_table, "Rol hash");
     HashTableClear           (&hash_table);
 
-    if (HashTableReadData (input_file_name, &hash_table, EighthHash) == HASH_TABLE_FUNC_STATUS_FAIL)
+    if (HashTableReadData (input_file_name, &hash_table, MurmurHash) == HASH_TABLE_FUNC_STATUS_FAIL)
         return HASH_TABLE_FUNC_STATUS_FAIL;
 
     HashTableLoadDump        (&hash_table);
-    HASH_ALGORITHM_VAR_PRINT (&hash_table, "Eighth hash");
+    HASH_ALGORITHM_VAR_PRINT (&hash_table, "Murmur hash");
 
     HashTableDtor (&hash_table);
 
@@ -256,7 +265,7 @@ HashTableFuncStatus HashTableTestFind (const char *input_file_name) {
     HashTable hash_table = {};
     HashTableCtor (&hash_table, DEFAULT_HASH_TABLE_CAPACITY);
 
-    if (HashTableReadData (input_file_name, &hash_table, EighthHash) == HASH_TABLE_FUNC_STATUS_FAIL)
+    if (HashTableReadData (input_file_name, &hash_table, MurmurHash) == HASH_TABLE_FUNC_STATUS_FAIL)
         return HASH_TABLE_FUNC_STATUS_FAIL;
 
     FILE *data_file = NULL;
@@ -301,11 +310,11 @@ HashTableFuncStatus HashTableFindBenchmark (HashTable *hash_table, Words *words)
 
     for (size_t i = 0; i < MAX_BENCHMARK_COMP_NUM; i++) {
 
-        char *curr_word = (words -> word);
+        char *volatile curr_word = (words -> word);
 
         for (size_t word_num = 0; word_num < ((size_t) words -> num_of_words); word_num++) {
 
-            //HashTableFind (hash_table, curr_word);
+            volatile HashTableFuncStatus find_status = HashTableFind (hash_table, curr_word);
             curr_word += MAX_WORD_LENGTH;
         }
     }

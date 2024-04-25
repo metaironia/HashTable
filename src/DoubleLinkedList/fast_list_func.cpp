@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include <immintrin.h>
 
 #include "fast_list_func.h"
 #include "fast_list_log.h"
@@ -338,7 +339,9 @@ ListFuncStatus FastListFindElem (FastList *list, FastListElem_t value_to_find) {
 
     while (curr_index != DUMMY_ELEM_POS) {
 
-        if (strcmp ((list -> mainItems)[curr_index].value, value_to_find) == 0)
+        if (_mm256_testc_si256 (_mm256_lddqu_si256 ((__m256i*) ((list -> mainItems)[curr_index].value)),
+                                _mm256_lddqu_si256 ((__m256i*) value_to_find)))
+
             return LIST_FUNC_STATUS_OK; 
     
         curr_index = (list -> mainItems)[curr_index].next; 

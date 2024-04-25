@@ -11,7 +11,7 @@ typedef FastListElem_t HashTableElem_t;
 const int DEFAULT_LIST_CAPACITY       = 1;
 const int DEFAULT_HASH_TABLE_CAPACITY = 787;
 
-const int MAX_BENCHMARK_COMP_NUM = 5000;
+const int MAX_BENCHMARK_COMP_NUM = 20000;
 
 enum HashTableFuncStatus {
 
@@ -40,6 +40,8 @@ HashTableFuncStatus HashTableDataDtor (HashTable *hash_table);
 HashTableFuncStatus HashTableDtor (HashTable *hash_table);
 
 HashTableFuncStatus HashTableInsert (HashTable *hash_table, const HashTableElem_t data, const int64_t key);
+
+char *MyStrdup32Bytes (const char *word);
 
 HashTableFuncStatus HashTableFind (HashTable *hash_table, const HashTableElem_t data);
 
