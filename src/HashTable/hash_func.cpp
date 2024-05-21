@@ -82,23 +82,22 @@ uint32_t RolHash (const HashTableElem_t value) {
 uint32_t MurmurHash (const HashTableElem_t value) {
 
     const uint8_t *key  = (const uint8_t *) value;
-    const uint32_t len  = (uint32_t) strlen ((const char *) key);
+
+    const uint32_t len = (size_t) strlen ((char *) key);
+
 /*
     uint32_t len = 0;
 
-    __asm__ (".intel_syntax noprefix\n\t"
-                             "vlddqu ymm1, [%1]\n\t"
-                             "vpxor ymm2, ymm2, ymm2\n\t"
-                             "vpcmpeqb ymm1, ymm1, ymm2\n\t"
-                             "vpmovmskb %0, ymm1\n\t"
-                             "tzcnt %0, %0"
-                             : "=X" (len)
-                             : "r" (value));
-
+    asm volatile ("vlddqu xmm1, [%1]\n\t"
+                  "vpxor xmm2, xmm2, xmm2\n\t"
+                  "vpcmpeqb xmm1, xmm1, xmm2\n\t"
+                  "vpmovmskb %0, xmm1\n\t"
+                  "tzcnt %0, %0"
+                  : "=X" (len)
+                  : "r" (value));
 */
-    const uint32_t seed = 0;
-          
-    uint32_t hash             = seed;
+
+    uint32_t hash             = 0;
     uint32_t four_bytes_block = 0;
 
     for (uint32_t i = len / 4; i > 0; i--) {
@@ -153,4 +152,12 @@ uint32_t MyRor (const uint32_t number, int num_to_ror) {
     num_to_ror %= sizeof (uint32_t) * 8;
 
     return (number << ((sizeof (uint32_t)) * 8 - num_to_ror)) | (number >> num_to_ror);
+}
+
+uint32_t IntrinsicCrc32 (const HashTableElem_t value) {
+
+    uint32_t crc = _mm_crc32_u64(0ULL, *( (uint64_t *) value));
+                   _mm_crc32_u64(crc,  *(((uint64_t *) value) + 1));
+
+    return crc;
 }

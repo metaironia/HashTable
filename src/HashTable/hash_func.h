@@ -38,4 +38,6 @@ uint32_t MyRol (const uint32_t number, int num_to_rol);
 
 uint32_t MyRor (const uint32_t number, int num_to_ror);
 
+uint32_t IntrinsicCrc32 (const HashTableElem_t value);
+
 #endif
