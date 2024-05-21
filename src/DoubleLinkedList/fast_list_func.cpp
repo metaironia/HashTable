@@ -8,6 +8,9 @@
 #include "fast_list_func.h"
 #include "fast_list_log.h"
 
+extern "C" {
+    int MyStrcmp (const char *first_word, const char *second_word);
+}
 
 ListFuncStatus FastListCtor (FastList *created_list, const int64_t list_capacity) {
 
@@ -339,11 +342,9 @@ ListFuncStatus FastListFindElem (FastList *list, FastListElem_t value_to_find) {
 
     while (curr_index != DUMMY_ELEM_POS) {
 
-        if (_mm256_testc_si256 (_mm256_lddqu_si256 ((__m256i*) ((list -> mainItems)[curr_index].value)),
-                                _mm256_lddqu_si256 ((__m256i*) value_to_find)))
-
+        if (MyStrcmp ((list -> mainItems)[curr_index].value, value_to_find) == 0)
             return LIST_FUNC_STATUS_OK; 
-    
+          
         curr_index = (list -> mainItems)[curr_index].next; 
     }
 
